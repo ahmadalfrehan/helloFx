@@ -1,4 +1,5 @@
 package hellofx;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,9 +11,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("hellofx.fxml"));
-        // URL url = getClass().getResource("src/to/your/file.fxml");
-        // FXMLLoader loader = new FXMLLoader(url);
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Ahmad Al_Frehan");
         primaryStage.setScene(new Scene(root, 400, 300));
         primaryStage.show();
     }
