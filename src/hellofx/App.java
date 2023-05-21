@@ -9,6 +9,19 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
 
 public class App extends Application {
@@ -34,9 +47,14 @@ public class App extends Application {
                 // Create a new window to display the selected image
                 Stage imageWindow = new Stage();
                 Image image = new Image(selectedFile.toURI().toString());
+                try {
+                    quaImage(selectedFile, 0);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
                 ImageView imageView = new ImageView(image);
                 StackPane root = new StackPane(imageView);
-                Scene scene = new Scene(root, image.getWidth(), image.getHeight());
+                Scene scene = new Scene(root, 100, 100);
                 imageWindow.setScene(scene);
                 imageWindow.show();
             }
@@ -46,6 +64,39 @@ public class App extends Application {
         primaryStage.setScene(sc);
 
         primaryStage.show();
+    }
+
+    public static void quaImage(File image, int colorC) throws IOException {
+        BufferedImage bufferedImage = ImageIO.read(image);
+        Image fxImage = SwingFXUtils.toFXImage(bufferedImage, null);
+        System.out.println(fxImage);
+        Image rgbImage = convertToRGB(fxImage);
+        System.out.println(rgbImage);
+        File output = new File("C:/Users/Dell/Desktop/output.png");
+        BufferedImage bufferedRGBImage = SwingFXUtils.fromFXImage(rgbImage, null);
+        ImageIO.write(bufferedRGBImage, "png", output);
+    }
+
+    public static Image convertToRGB(Image image) {
+        int width = (int) image.getWidth();
+        int height = (int) image.getHeight();
+
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader pixelReader = image.getPixelReader();
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Color color = pixelReader.getColor(x, y);
+                int red = (int) (color.getRed() * 255);
+                int green = (int) (color.getGreen() * 255);
+                int blue = (int) (color.getBlue() * 255);
+
+                Color rgbColor = Color.rgb(red, green, blue);
+                writableImage.getPixelWriter().setColor(x, y, rgbColor);
+            }
+        }
+
+        return writableImage;
     }
 
     public static void main(String[] args) {
