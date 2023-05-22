@@ -100,6 +100,10 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
+        KMeans kMeans = new KMeans();
+        KMeans.loadImage("C:/users/dell/desktop//flutter/ahmadalfrehan.png");
+        BufferedImage bufferedImage = kMeans.calculate(KMeans.loadImage("C:/users/dell/desktop/flutter/ahmadalfrehan.png"), 2, 3);
+        kMeans.saveImage("aan.png", bufferedImage);
         launch(args);
     }
 
