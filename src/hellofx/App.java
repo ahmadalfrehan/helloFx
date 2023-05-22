@@ -20,6 +20,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
@@ -101,9 +104,17 @@ public class App extends Application {
 
     public static void main(String[] args) {
         KMeans kMeans = new KMeans();
-        KMeans.loadImage("C:/users/dell/desktop//flutter/ahmadalfrehan.png");
-        BufferedImage bufferedImage = kMeans.calculate(KMeans.loadImage("C:/users/dell/desktop/flutter/ahmadalfrehan.png"), 2, 3);
-        kMeans.saveImage("aan.png", bufferedImage);
+        // KMeans.loadImage("C:/users/dell/desktop/m.png");
+        BufferedImage bufferedImage = kMeans.calculate(KMeans.loadImage("C:/users/dell/desktop/m.png"), 50, 3);
+        // BufferedImage bufferedImage = KMeans.loadImage("C:/users/dell/desktop/logo.png");
+        kMeans.saveImage("aan2.png", bufferedImage);
+        Set<Integer> colors =new HashSet();
+        for (int i = 0; i < bufferedImage.getHeight(); i++){
+            for (int j = 0; j < bufferedImage.getHeight(); j++) {
+                colors.add(bufferedImage.getRGB(j, i));
+            }
+        }
+        System.out.println(colors.size());
         launch(args);
     }
 
