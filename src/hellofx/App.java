@@ -105,11 +105,21 @@ public class App extends Application {
     public static void main(String[] args) {
         MedianCut medianCut = new MedianCut();
         medianCut.main(args);
-        // KMeans kMeans = new KMeans();
-        // // KMeans.loadImage("C:/users/dell/desktop/m.png");
-        // BufferedImage bufferedImage = kMeans.calculate(KMeans.loadImage("C:/users/dell/desktop/m.png"), 50, 3);
+        KMeans kMeans = new KMeans();
+         KMeans.loadImage("C:/users/dell/desktop/m.png");
+         BufferedImage bufferedImage = kMeans.calculate(KMeans.loadImage("C:/users/dell/desktop/m.png"), 50, 3);
         // // BufferedImage bufferedImage = KMeans.loadImage("C:/users/dell/desktop/logo.png");
-        // // kMeans.saveImage("aan2.png", bufferedImage);
+        kMeans.saveImage("aan2.png", bufferedImage);
+        MedianCut medianCut2 = new MedianCut();
+        BufferedImage sampleImg = null;
+        try {
+            sampleImg = ImageIO.read(new File("C:/users/dell/desktop/flutter/ahmadalfrehan.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        medianCut.medianCutQuantize(sampleImg, 16);
+        
         // Set<Integer> colors =new HashSet();
         // for (int i = 0; i < bufferedImage.getHeight(); i++){
         //     for (int j = 0; j < bufferedImage.getHeight(); j++) {

@@ -21,7 +21,7 @@ public class MedianCut {
     public static void main(String[] args) {
         BufferedImage sampleImg = null;
         try {
-            sampleImg = ImageIO.read(new File("C:/users/dell/desktop/m.png"));
+            sampleImg = ImageIO.read(new File("C:/users/dell/desktop/flutter/ahmadalfrehan.png"));
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -58,7 +58,7 @@ public class MedianCut {
         }
         int index = getMaxColorRangeIndex();
         sortRgbListByMaxRange(index);
-        getTenColors();
+        getTenColors(img.getHeight(), img.getWidth());
         // System.out.println(bucket);
         // // Recursively split the bucket until the desired number of colors is reached
         // splitBucket(bucket, numColors);
@@ -91,58 +91,39 @@ public class MedianCut {
 
     }
 
-    public void getTenColors() {
+    public void getTenColors(int height, int width) {
         int size = rgbListSorted.size();
-        int step = size / 50;
+        System.out.println(size);
+        int step = size / 10;
+        // System.out.println(rgbListSorted);
         ArrayList<int[]> tenColors = new ArrayList<int[]>();
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 10; i++) {
             int[] rgb = rgbListSorted.get(i * step);
             tenColors.add(rgb);
             // System.out.println(rgb[0] + " " + rgb[1] + " " + rgb[2]);
         }
-
-        int width = 500; // Set the desired width of the image
-        int height = 500; // Set the desired height of the image
-
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();
 
         // Iterate over the tenColors list and set pixels in the image
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 10; i++) {
             int[] rgb = tenColors.get(i);
             Color color = new Color(rgb[0], rgb[1], rgb[2]);
             graphics.setColor(color);
-            graphics.fillRect(i * (width / 50), 0, (width / 50), height);
+            graphics.fillRect(i * (width / 10), 0, (width / 10), height);
         }
 
         try {
-            File output = new File("C:/users/dell/desktop/output.png"); // Set the desired output file name and
+            File output = new File("output.png"); // Set the desired output file name and
                                                                         // extension
-            ImageIO.write(image, "jpg", output);
+            ImageIO.write(image, "png", output);
             System.out.println("Image saved successfully.");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // Pane[] panes = new Pane[] { c1, c2, c3, c4, c5, c6, c7, c8, c9, c10 };
-        // javafx.scene.control.Label[] labels = new Label[] { l1, l2, l3, l4, l5, l6,
-        // l7, l8, l9, l10 };
-
-        // for (int i = 0; i < 10; i++) {
-        // int[] rgb = tenColors.get(i);
-        // String hex = String.format("#%02x%02x%02x", rgb[0], rgb[1], rgb[2]);
-        // try {
-        // panes[i].setStyle("-fx-background-color: rgb(" + rgb[0] + "," + rgb[1] + ","
-        // + rgb[2] + ")");
-        // labels[i].setText(hex);
-        // } catch (Exception e) {
-        // // System.out.println("i = "+i);
-        // e.printStackTrace();
-        // }
-        // }
-
     }
 
-    public int getMaxColorRangeIndex() {
+    public int getMaxColorRangeIndex() { 
         int[] rangeRGB = new int[3];
         int maxR = 0;
         int maxG = 0;
