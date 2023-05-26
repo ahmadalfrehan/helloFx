@@ -11,20 +11,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
-import javafx.scene.image.PixelReader;
+
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
+import java.io.IOException;
+
 import javafx.stage.FileChooser;
 
 public class App extends Application {
@@ -104,13 +99,12 @@ public class App extends Application {
 
     public static void main(String[] args) {
         MedianCut medianCut = new MedianCut();
-        medianCut.main(args);
+        MedianCut.main(args);
         KMeans kMeans = new KMeans();
-         KMeans.loadImage("C:/users/dell/desktop/m.png");
-         BufferedImage bufferedImage = kMeans.calculate(KMeans.loadImage("C:/users/dell/desktop/m.png"), 50, 3);
-        // // BufferedImage bufferedImage = KMeans.loadImage("C:/users/dell/desktop/logo.png");
-        kMeans.saveImage("aan2.png", bufferedImage);
-        MedianCut medianCut2 = new MedianCut();
+        KMeans.loadImage("C:/users/dell/desktop/m.png");
+        BufferedImage bufferedImage = kMeans.calculate(KMeans.loadImage("C:/users/dell/desktop/m.png"), 50, 3);
+        KMeans.saveImage("aan2.png", bufferedImage);
+
         BufferedImage sampleImg = null;
         try {
             sampleImg = ImageIO.read(new File("C:/users/dell/desktop/flutter/ahmadalfrehan.png"));
@@ -119,15 +113,10 @@ public class App extends Application {
             return;
         }
         medianCut.medianCutQuantize(sampleImg, 16);
-        
-        // Set<Integer> colors =new HashSet();
-        // for (int i = 0; i < bufferedImage.getHeight(); i++){
-        //     for (int j = 0; j < bufferedImage.getHeight(); j++) {
-        //         colors.add(bufferedImage.getRGB(j, i));
-        //     }
-        // }
-        // System.out.println(colors.size());
-        // launch(args);
+
+        ToIndexedImage.rgbaToIndexedBufferedImage(bufferedImage);
+        System.out.println(ToIndexedImage.rgbaToIndexedBufferedImage(bufferedImage));
+        launch(args);
     }
 
 }
