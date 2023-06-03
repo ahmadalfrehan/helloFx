@@ -95,20 +95,19 @@ public class App extends Application {
     public static void main(String[] args) {
         MedianCut medianCut = new MedianCut();
         MedianCut.main(args);
+        String imagePath = "C:/users/dell/desktop/flutter/ahmadalfrehan.png";
         KMeans kMeans = new KMeans();
-        KMeans.loadImage("C:/users/dell/desktop/m.png");
-        BufferedImage bufferedImage = kMeans.calculate(KMeans.loadImage("C:/users/dell/desktop/m.png"), 50, 3);
+        KMeans.loadImage(imagePath);
+        BufferedImage bufferedImage = kMeans.calculate(KMeans.loadImage(imagePath), 50, 3);
         KMeans.saveImage("aan2.png", bufferedImage);
-
         BufferedImage sampleImg = null;
         try {
-            sampleImg = ImageIO.read(new File("C:/users/dell/desktop/flutter/ahmadalfrehan.png"));
+            sampleImg = ImageIO.read(new File(imagePath));
         } catch (IOException e) {
             e.printStackTrace();
             return;
         }
         medianCut.medianCutQuantize(sampleImg, 16);
-
         ToIndexedImage.rgbaToIndexedBufferedImage(bufferedImage);
         System.out.println(ToIndexedImage.rgbaToIndexedBufferedImage(bufferedImage));
         launch(args);
