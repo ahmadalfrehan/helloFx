@@ -1,7 +1,6 @@
 package hellofx;
 
 import java.io.File;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -11,38 +10,34 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.embed.swing.SwingFXUtils;
-
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
-
+import javafx.scene.text.Text;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-
 import java.io.IOException;
-
 import javafx.stage.FileChooser;
 
 public class App extends Application {
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Ahmad Al_Frehan");
+        Text text = new Text("Hey please select Photo");
+
         Button b = new Button("Browse");
+
         StackPane stackPane = new StackPane();
-        // StackPane root = new StackPane();
+        stackPane.getChildren().add(0, text);
         stackPane.getChildren().add(b);
+
         b.setOnAction(e -> {
-            // Create a FileChooser object
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Select Image File");
             fileChooser.getExtensionFilters().add(
                     new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
-
-            // Show the file chooser dialog and get the selected file
             File selectedFile = fileChooser.showOpenDialog(primaryStage);
 
             if (selectedFile != null) {
-                // Create a new window to display the selected image
                 Stage imageWindow = new Stage();
                 Image image = new Image(selectedFile.toURI().toString());
                 try {
