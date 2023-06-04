@@ -21,7 +21,6 @@ public class KMeans {
                     + " [mode -i (ITERATIVE)|-c (CONTINUOS)]");
             return;
         }
-        // parse arguments
         String src = args[0];
         String dst = args[1];
         int k = Integer.parseInt(args[2]);
@@ -33,12 +32,11 @@ public class KMeans {
             mode = MODE_CONTINUOUS;
         }
 
-        // create new KMeans object
         KMeans kmeans = new KMeans();
-        // call the function to actually start the clustering
+
         BufferedImage dstImage = kmeans.calculate(loadImage(src),
                 k, mode);
-        // save the resulting image
+
         saveImage(dst, dstImage);
     }
 
@@ -247,12 +245,13 @@ public class KMeans {
             return d;
         }
     }
+
     public static void savedImage(BufferedImage image, String folderPath, String imageName) {
         File folder = new File(folderPath);
         if (!folder.exists()) {
             folder.mkdirs();
         }
-    
+
         String outputFilePath = folderPath + File.separator + imageName;
         File outputFile = new File(outputFilePath);
         try {

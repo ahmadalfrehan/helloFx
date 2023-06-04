@@ -37,7 +37,6 @@ public class App extends Application {
             fileChooser.getExtensionFilters().add(
                     new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
             File selectedFile = fileChooser.showOpenDialog(primaryStage);
-
             if (selectedFile != null) {
                 Stage imageWindow = new Stage();
                 Image image = new Image(selectedFile.toURI().toString());
