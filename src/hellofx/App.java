@@ -20,6 +20,7 @@ import javafx.stage.FileChooser;
 
 public class App extends Application {
     @Override
+
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Ahmad Al_Frehan");
         Text text = new Text("Hey please select Photo");
@@ -93,13 +94,28 @@ public class App extends Application {
     }
 
     public static void main(String[] args) {
-        MedianCut medianCut = new MedianCut();
+        String imagePath = "C:/users/dell/desktop/logo.png";
+
+        Image inputImage = new Image(imagePath);
+        Median median = new Median();
+
+        Median.main(args);
+        // BufferedImage buffereImage = SwingFXUtils.fromFXImage(inputImage, null);
+        // // BufferedImage quantizedImage = median.quantize(buffereImage, 10);
+        // // MedianCut.saveImage("C:/Users/User/Desktop/aan5.png", quantizedImage);
+        // String outputFolderPath = "C:/Users/dell/Desktop/";
+        // // Median.savedImage(quantizedImage, outputFolderPath, "image.png");
+
+        // // Median.main(args);
+        // MedianCut medianCut = new MedianCut();
         MedianCut.main(args);
-        String imagePath = "C:/users/dell/desktop/flutter/ahmadalfrehan.png";
+
         KMeans kMeans = new KMeans();
         KMeans.loadImage(imagePath);
         BufferedImage bufferedImage = kMeans.calculate(KMeans.loadImage(imagePath), 50, 3);
         KMeans.saveImage("aan2.png", bufferedImage);
+        String outputFolderPath = "C:/Users/dell/Desktop/";
+        KMeans.savedImage(bufferedImage,outputFolderPath, "output.png");
         BufferedImage sampleImg = null;
         try {
             sampleImg = ImageIO.read(new File(imagePath));
@@ -107,9 +123,32 @@ public class App extends Application {
             e.printStackTrace();
             return;
         }
-        medianCut.medianCutQuantize(sampleImg, 16);
-        ToIndexedImage.rgbaToIndexedBufferedImage(bufferedImage);
+        // medianCut.medianCutQuantize(sampleImg, 16);
+        BufferedImage img = ToIndexedImage.rgbaToIndexedBufferedImage(bufferedImage);
+        try {
+            ImageIO.write(img, "png", new File("C:/Users/dell/Desktop/img"));
+
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+
         System.out.println(ToIndexedImage.rgbaToIndexedBufferedImage(bufferedImage));
+        BufferedImage sampleImage2 = null;
+        try {
+            sampleImage2 = ImageIO.read(new File("C:/Users/dell/Desktop/girl.jpg"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        OctreeQuantizer octreeQuantizer = new OctreeQuantizer();
+        BufferedImage out = octreeQuantizer.quantize(sampleImage2);
+        File outputImageFile = new File(System.getProperty("user.home") + "/Desktop/output5.png");
+        try {
+            ImageIO.write(out, "png", outputImageFile);
+            System.out.println("image saved successfully: " + outputImageFile.getAbsolutePath());
+        } catch (IOException e) {
+            System.out.println("Failed to save image: " + e.getMessage());
+        }
         launch(args);
     }
 

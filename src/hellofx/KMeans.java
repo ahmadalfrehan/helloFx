@@ -247,5 +247,19 @@ public class KMeans {
             return d;
         }
     }
-
+    public static void savedImage(BufferedImage image, String folderPath, String imageName) {
+        File folder = new File(folderPath);
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+    
+        String outputFilePath = folderPath + File.separator + imageName;
+        File outputFile = new File(outputFilePath);
+        try {
+            ImageIO.write(image, "png", outputFile);
+            System.out.println("Quantized image saved successfully: " + outputFilePath);
+        } catch (Exception e) {
+            System.out.println("Failed to save quantized image: " + e.getMessage());
+        }
+    }
 }

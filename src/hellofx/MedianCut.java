@@ -95,6 +95,30 @@ public class MedianCut {
         int size = rgbListSorted.size();
         System.out.println(size);
         int step = size / 10;
+        ArrayList<int[]> tenColors1 = new ArrayList<int[]>();
+        for (int i = 0; i < rgbList.size(); i++) {
+            int[] rgb = rgbList.get(i);
+            tenColors1.add(rgb);
+            // System.out.println(rgb[0] + " " + rgb[1] + " " + rgb[2]);
+        }
+        BufferedImage image2 = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics2 = image2.createGraphics();
+
+        for (int i = 0; i < rgbList.size(); i++) {
+            int[] rgb = tenColors1.get(i);
+            Color color = new Color(rgb[0], rgb[1], rgb[2]);
+            graphics2.setColor(color);
+            graphics2.fillRect(i * (width), 0, (width), height);
+        }
+
+        try {
+            File output = new File("output2.png");
+            ImageIO.write(image2, "png", output);
+            System.out.println("Image 1 saved successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         // System.out.println(rgbListSorted);
         ArrayList<int[]> tenColors = new ArrayList<int[]>();
         for (int i = 0; i < 10; i++) {
@@ -115,7 +139,7 @@ public class MedianCut {
 
         try {
             File output = new File("output.png"); // Set the desired output file name and
-                                                                        // extension
+                                                  // extension
             ImageIO.write(image, "png", output);
             System.out.println("Image saved successfully.");
         } catch (IOException e) {
@@ -123,7 +147,7 @@ public class MedianCut {
         }
     }
 
-    public int getMaxColorRangeIndex() { 
+    public int getMaxColorRangeIndex() {
         int[] rangeRGB = new int[3];
         int maxR = 0;
         int maxG = 0;
