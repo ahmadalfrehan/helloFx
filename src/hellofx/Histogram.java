@@ -1,11 +1,11 @@
 package hellofx;
+
 import java.awt.image.BufferedImage;
 // import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -19,15 +19,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelReader;
+
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-/**
- * @web http://java-buddy.blogspot.com
- */
 public class Histogram extends Application {
 
     String defaultImage = "http://goo.gl/kYEQl";
@@ -38,8 +35,7 @@ public class Histogram extends Application {
         Label labelInfo = new Label();
         labelInfo.setText(
                 "java.version: " + System.getProperty("java.version") + "\n"
-                + "javafx.runtime.version: " + System.getProperty("javafx.runtime.version")
-        );
+                        + "javafx.runtime.version: " + System.getProperty("javafx.runtime.version"));
 
         TextField textSrc = new TextField();
         textSrc.setText(defaultImage);
@@ -50,30 +46,21 @@ public class Histogram extends Application {
         imageView.setFitWidth(600);
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();
-        final LineChart<String, Number> chartHistogram
-                = new LineChart<>(xAxis, yAxis);
+        final LineChart<String, Number> chartHistogram = new LineChart<>(xAxis, yAxis);
         chartHistogram.setCreateSymbols(false);
-        Image image =  new Image("C:/users/dell/desktop/flutter/ahmadalfrehan.png");
-        // } 
-        // catch (IOException e) {
-        //     // TODO Auto-generated catch block
-        //     e.printStackTrace();
-        // }
+        Image image = new Image("C:/users/dell/desktop/flutter/ahmadalfrehan.png");
 
         btnDo.setOnAction((ActionEvent event) -> {
-
-            // String imageSrc = textSrc.getText();
-            // image = new Image(image);
             imageView.setImage(image);
             chartHistogram.getData().clear();
 
             ImageHistogram imageHistogram = new ImageHistogram();
-            if(imageHistogram.isSuccess()){
+            if (imageHistogram.isSuccess()) {
                 chartHistogram.getData().addAll(
-                    //imageHistogram.getSeriesAlpha(),
-                    imageHistogram.getSeriesRed(),
-                    imageHistogram.getSeriesGreen(),
-                    imageHistogram.getSeriesBlue());
+                        // imageHistogram.getSeriesAlpha(),
+                        imageHistogram.getSeriesRed(),
+                        imageHistogram.getSeriesGreen(),
+                        imageHistogram.getSeriesBlue());
             }
         });
 
@@ -93,9 +80,6 @@ public class Histogram extends Application {
         primaryStage.show();
     }
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
         launch(args);
     }
@@ -103,7 +87,7 @@ public class Histogram extends Application {
     class ImageHistogram {
 
         private BufferedImage image;
-         private long alpha[] = new long[256];
+        private long alpha[] = new long[256];
         private long red[] = new long[256];
         private long green[] = new long[256];
         private long blue[] = new long[256];
@@ -116,27 +100,18 @@ public class Histogram extends Application {
         private boolean success;
 
         ImageHistogram() {
-            // image = src;
             try {
                 image = ImageIO.read(new File("C:/users/dell/desktop/flutter/ahmadalfrehan.png"));
             } catch (IOException e) {
-                // TODO Auto-generated catch block
+
                 e.printStackTrace();
             }
-       
+
             success = false;
 
-            //init
             for (int i = 0; i < 256; i++) {
                 alpha[i] = red[i] = green[i] = blue[i] = 0;
             }
-
-            // PixelReader pixelReader = ((Image) image).getPixelReader();
-            // if (pixelReader == null) {
-                // return;
-            // }
-
-            //count pixels
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
                     int argb = image.getRGB(x, y);
@@ -162,8 +137,6 @@ public class Histogram extends Application {
             seriesGreen.setName("green");
             seriesBlue.setName("blue");
 
-            //copy alpha[], red[], green[], blue[]
-            //to seriesAlpha, seriesRed, seriesGreen, seriesBlue
             for (int i = 0; i < 256; i++) {
                 seriesAlpha.getData().add(new XYChart.Data(String.valueOf(i), alpha[i]));
                 seriesRed.getData().add(new XYChart.Data(String.valueOf(i), red[i]));
