@@ -34,7 +34,6 @@ public class Saveimage extends Application {
     private Button showHistogramButton;
     private Button showImageColorPalette;
 
-    // Variable to track the selected algorithm
     private String selectedAlgorithm;
 
     public static void main(String[] args) {
@@ -45,7 +44,6 @@ public class Saveimage extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Image Loader");
 
-        // Create components
         imageView = new ImageView();
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(600);
@@ -58,12 +56,10 @@ public class Saveimage extends Application {
         showHistogramButton = new Button("Show Color Histogram");
         showImageColorPalette = new Button("Show Image Color Palette");
 
-        // Configure file chooser
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png"));
 
-        // Add action listener to choose image button
         chooseImageButton.setOnAction(e -> {
             File file = fileChooser.showOpenDialog(primaryStage);
             if (file != null) {
@@ -76,9 +72,8 @@ public class Saveimage extends Application {
             }
         });
 
-        // Add action listener to octree button
         octreeButton.setOnAction(e -> {
-            selectedAlgorithm = "Octree"; // Set the selected algorithm
+            selectedAlgorithm = "Octree";
             if (image != null) {
                 BufferedImage outputImage = OctreeQuantizer.quantize(SwingFXUtils.fromFXImage(image, null));
                 saveImage = outputImage;
@@ -86,9 +81,8 @@ public class Saveimage extends Application {
             }
         });
 
-        // Add action listener to indexed button
         indexedButton.setOnAction(e -> {
-            selectedAlgorithm = "Indexed"; // Set the selected algorithm
+            selectedAlgorithm = "Indexed";
             if (image != null) {
                 BufferedImage outputImage = ToIndexedImage
                         .rgbaToIndexedBufferedImage(SwingFXUtils.fromFXImage(image, null));
@@ -97,36 +91,22 @@ public class Saveimage extends Application {
             }
         });
 
-        // Add action listener to k-means button
         kmeansButton.setOnAction(e -> {
-            selectedAlgorithm = "K-Means"; // Set the selected algorithm
+            selectedAlgorithm = "K-Means";
             if (image != null) {
-                // Implement the K-Means algorithm logic here
-                // ...
-
-                // Example code for setting the saveImage variable
-                // saveImage = ...;
 
                 imageView.setImage(SwingFXUtils.toFXImage(saveImage, null));
             }
         });
 
-        // Add action listener to median cut button
         mediancutButton.setOnAction(e -> {
-            selectedAlgorithm = "Median Cut"; // Set the selected algorithm
+            selectedAlgorithm = "Median Cut";
             if (image != null) {
-                // Implement the Median Cut algorithm logic here
-                // ...
-
-                // Example code for setting the saveImage variable
-                // saveImage = ...;
-                // Median.main();
 
                 imageView.setImage(SwingFXUtils.toFXImage(saveImage, null));
             }
         });
 
-        // Add action listener to save button
         saveButton.setOnAction(e -> {
             if (image != null && saveImage != null) {
                 FileChooser saveFileChooser = new FileChooser();
@@ -144,7 +124,6 @@ public class Saveimage extends Application {
             }
         });
 
-        // Add components to the layout
         VBox buttonsVBox = new VBox(10, chooseImageButton, octreeButton, kmeansButton, indexedButton,
                 mediancutButton,
                 saveButton, showHistogramButton, showImageColorPalette);
