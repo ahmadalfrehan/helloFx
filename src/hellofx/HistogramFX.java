@@ -8,33 +8,30 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;  
+import javax.imageio.ImageIO;
 
 public class HistogramFX extends Application {
 
     private static final int BINS = 256;
     private BufferedImage image;
-    private HistogramDataset dataset;
     private XYChart.Series<String, Number> redSeries;
     private XYChart.Series<String, Number> greenSeries;
     private XYChart.Series<String, Number> blueSeries;
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("Histogram");
+        primaryStage.setTitle("Histogram"); 
 
         // Load image using BufferedImage
         try {
-            image = ImageIO.read(new File("path/to/your/image.jpg"));
+            image = ImageIO.read(new File("C:/users/dell/desktop/flutter/ahmadalfrehan.png"));
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -50,45 +47,7 @@ public class HistogramFX extends Application {
         BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
         barChart.setTitle("Histogram");
 
-        // Create the dataset and series
-        dataset = new HistogramDataset();
-        createSeries();
-
-        // Add the series to the dataset
-        dataset.addSeries("Red", redSeries.getData().stream()
-                .map(data -> data.getYValue().intValue())
-                .toArray());
-        dataset.addSeries("Green", greenSeries.getData().stream()
-                .map(data -> data.getYValue().intValue())
-                .toArray());
-        dataset.addSeries("Blue", blueSeries.getData().stream()
-                .map(data -> data.getYValue().intValue())
-                .toArray());
-
-        // Add the series to the chart
-        barChart.getData().addAll(redSeries, greenSeries, blueSeries);
-
-        // Create checkboxes for series visibility control
-        CheckBox redCheckBox = createCheckBox("Red", redSeries, Color.RED);
-        CheckBox greenCheckBox = createCheckBox("Green", greenSeries, Color.GREEN);
-        CheckBox blueCheckBox = createCheckBox("Blue", blueSeries, Color.BLUE);
-
-        // Create a VBox for the checkboxes
-        VBox checkBoxesBox = new VBox(5, redCheckBox, greenCheckBox, blueCheckBox);
-        checkBoxesBox.setPadding(new Insets(10));
-
-        // Create the root layout
-        BorderPane root = new BorderPane();
-        root.setCenter(barChart);
-        root.setRight(checkBoxesBox);
-
-        // Create the scene and set it to the stage
-        Scene scene = new Scene(root, 800, 600);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-
-    private void createSeries() {
+        // Create the series
         redSeries = new XYChart.Series<>();
         greenSeries = new XYChart.Series<>();
         blueSeries = new XYChart.Series<>();
@@ -104,6 +63,28 @@ public class HistogramFX extends Application {
             greenSeries.getData().add(new XYChart.Data<>(String.valueOf(i), greenHistogram[i]));
             blueSeries.getData().add(new XYChart.Data<>(String.valueOf(i), blueHistogram[i]));
         }
+
+        // Create checkboxes for series visibility control
+        CheckBox redCheckBox = createCheckBox("Red", redSeries, Color.RED);
+        CheckBox greenCheckBox = createCheckBox("Green", greenSeries, Color.GREEN);
+        CheckBox blueCheckBox = createCheckBox("Blue", blueSeries, Color.BLUE);
+
+        // Create a VBox for the checkboxes
+        VBox checkBoxesBox = new VBox(5, redCheckBox, greenCheckBox, blueCheckBox);
+        checkBoxesBox.setPadding(new Insets(10));
+
+        // Add the series to the chart
+        barChart.getData().addAll(redSeries, greenSeries, blueSeries);
+
+        // Create the root layout
+        BorderPane root = new BorderPane();
+        root.setCenter(barChart);
+        root.setRight(checkBoxesBox);
+
+        // Create the scene and set it to the stage
+        Scene scene = new Scene(root, 800, 600);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     private int[] getHistogram(BufferedImage image, int component) {
