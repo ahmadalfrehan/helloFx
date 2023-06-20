@@ -23,9 +23,12 @@ import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -111,11 +114,10 @@ public class EnterImage extends Application {
 
                     for (File imageFile : imageFiles) {
                         Image image = new Image(imageFile.toURI().toString());
-                        Histogram.imagePath = image.getUrl();
-                        // Histogram histogram = new Histogram();
-                        Histogram.ImageHistogram d = new Histogram.ImageHistogram();
-
-
+                        GetHistogram.imagePath = image.getUrl().replaceAll("%20", "");
+                        System.out.println(image.getUrl().replaceAll("%20", ""));
+                        GetHistogram getHistogram = new GetHistogram();
+                        System.out.println(getHistogram.getMaximmum());
                         System.out.println("Image file: " + imageFile.getName());
                     }
                 } catch (IOException error) {
