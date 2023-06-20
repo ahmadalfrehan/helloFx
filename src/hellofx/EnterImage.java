@@ -256,11 +256,13 @@ public class EnterImage extends Application {
                 images.get(0).colorAndTheirName,
                 images.get(0).filePath,
                 images.get(0).red, images.get(0).green, images.get(0).blue);
-
-        for (int i = 0; i < images.size(); i++) {
-            if (isConvergent(images.get(i).red, images.get(i + 1).red)) {
-                imagesAnother.add(i, images.get(i));
-                System.out.println(imagesAnother.get(0));
+        int coun = 0;
+        for (int i = 1; i < images.size(); i++) {
+            if (isConvergent(images.get(0).red, images.get(i).red) ||
+                    isConvergent(images.get(0).green, images.get(i).green) ||
+                    isConvergent(images.get(0).blue, images.get(i).blue)) {
+                imagesAnother.add(coun, images.get(i));
+                coun++;
             }
         }
         List<SameImageModel> convergentImages = images.stream()
