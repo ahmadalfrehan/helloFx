@@ -5,30 +5,23 @@ import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.collections.*;
+
 import javafx.stage.Stage;
-import javafx.scene.text.Text.*;
-import javafx.scene.paint.*;
-import javafx.scene.text.*;
+
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -86,16 +79,13 @@ public class EnterImage extends Application {
 
         EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e) {
-
                 Color c = cp.getValue();
-
                 l1.setText("Red = " + c.getRed() + ", Green = " + c.getGreen()
                         + ", Blue = " + c.getBlue());
             }
         };
 
         cp.setOnAction(event);
-
         r.getChildren().add(l);
         r.getChildren().add(cp);
         r.getChildren().add(l1);
@@ -150,7 +140,6 @@ public class EnterImage extends Application {
         mediancutButton.setOnAction(e -> {
             selectedAlgorithm = "Median Cut";
             if (image != null) {
-                
                 imageView.setImage(SwingFXUtils.toFXImage(saveImage, null));
             }
         });
