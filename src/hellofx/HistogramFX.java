@@ -3,6 +3,7 @@ package hellofx;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -28,7 +29,6 @@ public class HistogramFX extends Application {
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(10));
 
-        // Populate the GridPane with images
         int row = 0;
         int col = 0;
         for (SameImageModel image : images) {
@@ -42,9 +42,16 @@ public class HistogramFX extends Application {
                 row++;
             }
         }
-        Scene scene1 = new Scene(gridPane, 800, 600);
+        // Scene scene1 = new Scene(gridPane, 800, 600);
+        ScrollPane scrollPane = new ScrollPane(gridPane);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+
+        // Create a Scene with the ScrollPane
+        Scene scene = new Scene(scrollPane, 800, 600);
+
         Stage secondaryStage = new Stage();
-        secondaryStage.setScene(scene1);
+        secondaryStage.setScene(scene);
         secondaryStage.setTitle("Image Grid");
 
         secondaryStage.show();

@@ -66,6 +66,7 @@ public class EnterImage extends Application {
     }
 
     List<SameImageModel> images = new ArrayList<SameImageModel>();
+    List<SameImageModel> imagesAnother = new ArrayList<SameImageModel>();
 
     @Override
     public void start(Stage primaryStage) {
@@ -140,8 +141,9 @@ public class EnterImage extends Application {
                     error.printStackTrace();
                 }
             } else {
-                
+
             }
+            System.out.println("================finished pick all images===============");
         });
 
         chooseImageButton.setOnAction(e -> {
@@ -203,9 +205,12 @@ public class EnterImage extends Application {
             }
         });
 
-        showFiltedImage.setOnAction(e -> {
+        mediancutButton.setOnAction(e -> {
             CalculateImage();
-            HistogramFX histogramFX = new HistogramFX(images);
+        });
+
+        showFiltedImage.setOnAction(e -> {
+            HistogramFX histogramFX = new HistogramFX(imagesAnother);
             histogramFX.start(primaryStage);
         });
         showHistogramButton.setOnAction(e -> {
@@ -247,19 +252,32 @@ public class EnterImage extends Application {
     }
 
     public void CalculateImage() {
-
         SameImageModel targetImage = new SameImageModel(
                 images.get(0).colorAndTheirName,
                 images.get(0).filePath,
                 images.get(0).red, images.get(0).green, images.get(0).blue);
+
+        for (int i = 0; i < images.size(); i++) {
+            if (isConvergent(images.get(i).red, images.get(i + 1).red)) {
+                imagesAnother.add(i, images.get(i));
+                System.out.println(imagesAnother.get(0));
+            }
+        }
         List<SameImageModel> convergentImages = images.stream()
-                .filter(image -> image.calculateDistance(targetImage) < 500)
+                .filter(image -> image.calculateDistance(targetImage) < Long.MAX_VALUE)
                 .toList();
         for (SameImageModel image : convergentImages) {
             System.out.println(image.filePath);
             System.out.println(image.colorAndTheirName);
             System.out.println(image.blue);
         }
+    }
+
+    public static boolean isConvergent(Long old, Long newI) {
+        if (Math.abs(old - newI) <= 10000) {
+            return true;
+        }
+        return false;
     }
 
     class SameImageModel {
