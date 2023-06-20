@@ -292,6 +292,7 @@ public class EnterImage extends Application {
         //     }
         // }
     }
+    
 
     public static boolean isConvergent(Long old, Long newI) {
         if (Math.abs(old - newI) <= 10000) {
