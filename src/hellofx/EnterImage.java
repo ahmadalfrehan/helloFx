@@ -17,7 +17,7 @@ import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -47,6 +47,7 @@ public class EnterImage extends Application {
     private Button kmeansButton;
     private Button indexedButton;
     private Button mediancutButton;
+    private Button showFiltedImage;
     private Button selectFolder;
     private Button saveButton;
     private Button showHistogramButton;
@@ -79,6 +80,7 @@ public class EnterImage extends Application {
         kmeansButton = new Button("K-Means");
         indexedButton = new Button("Indexed");
         mediancutButton = new Button("Median Cut");
+        showFiltedImage = new Button("ShowFiltered Image");
         saveButton = new Button("Save");
         showHistogramButton = new Button("Show Color Histogram");
         showImageColorPalette = new Button("Show Image Color Palette");
@@ -109,28 +111,36 @@ public class EnterImage extends Application {
         r.getChildren().add(cp);
         r.getChildren().add(l1);
         selectFolder.setOnAction(e -> {
+            int count;
             DirectoryChooser directoryChooser = new DirectoryChooser();
             File selectedDirectory = directoryChooser.showDialog(primaryStage);
             if (selectedDirectory != null) {
                 try {
+
                     List<File> imageFiles = Files.walk(selectedDirectory.toPath())
                             .filter(p -> isImageFile(p))
                             .map(Path::toFile)
                             .collect(Collectors.toList());
-
+                    count = 0;
                     for (File imageFile : imageFiles) {
+                        count += 1;
                         Image image = new Image(imageFile.toURI().toString());
                         GetHistogram.imagePath = image.getUrl().replaceAll("%20", "");
-                        System.out.println(image.getUrl().replaceAll("%20", ""));
                         GetHistogram getHistogram = new GetHistogram();
-                        System.out.println(getHistogram.getMaximmum());
-                        System.out.println("Image file: " + imageFile.getName());
+                        EnterImage enterImage = new EnterImage();
+                        SameImageModel sameImageModel = enterImage.new SameImageModel(
+                                getHistogram.getMaximmum(),
+                                image.getUrl(),
+                                getHistogram.getMaximmum().get("red"),
+                                getHistogram.getMaximmum().get("green"),
+                                getHistogram.getMaximmum().get("blue"));
+                        images.add(count, sameImageModel);
                     }
                 } catch (IOException error) {
                     error.printStackTrace();
                 }
             } else {
-                // System.out.println(selectedDirectory.getAbsolutePath());
+                
             }
         });
 
@@ -193,8 +203,7 @@ public class EnterImage extends Application {
             }
         });
 
-        mediancutButton.setOnAction(e -> {
-            selectedAlgorithm = "Median Cut";
+        showFiltedImage.setOnAction(e -> {
             CalculateImage();
             HistogramFX histogramFX = new HistogramFX(images);
             histogramFX.start(primaryStage);
@@ -220,16 +229,15 @@ public class EnterImage extends Application {
             }
         });
 
-        VBox buttonsVBox = new VBox(10, chooseImageButton, selectFolder, octreeButton, kmeansButton, indexedButton,
+        VBox buttonsVBox = new VBox(10, chooseImageButton, selectFolder, showFiltedImage, octreeButton, kmeansButton,
+                indexedButton,
                 mediancutButton, saveButton, showHistogramButton,
                 showImageColorPalette);
         buttonsVBox.setAlignment(Pos.CENTER);
         buttonsVBox.setPadding(new Insets(10));
-
         BorderPane root = new BorderPane();
         root.setCenter(imageView);
         root.setRight(buttonsVBox);
-        // root.setTop(gridPane);
         root.setBottom(r);
 
         Scene scene = new Scene(root, 800, 600);
@@ -245,7 +253,7 @@ public class EnterImage extends Application {
                 images.get(0).filePath,
                 images.get(0).red, images.get(0).green, images.get(0).blue);
         List<SameImageModel> convergentImages = images.stream()
-                .filter(image -> image.calculateDistance(targetImage) < Integer.MAX_VALUE)
+                .filter(image -> image.calculateDistance(targetImage) < 500)
                 .toList();
         for (SameImageModel image : convergentImages) {
             System.out.println(image.filePath);

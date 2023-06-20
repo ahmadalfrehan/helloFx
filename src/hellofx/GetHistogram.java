@@ -34,7 +34,6 @@ public class GetHistogram {
     private boolean success;
 
     GetHistogram() {
-        System.out.println(imagePath.substring(5, imagePath.length()));
         try {
             image = ImageIO.read(new File(imagePath.substring(5, imagePath.length())));
         } catch (IOException e) {
