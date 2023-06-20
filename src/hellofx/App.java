@@ -96,7 +96,7 @@ public class App extends Application {
         String imagePath = "C:/users/dell/desktop/logo.png";
 
         Image inputImage = new Image(imagePath);
-        Median median = new Median(inputImage.getUrl());
+        Median median = new Median(SwingFXUtils.fromFXImage(inputImage, null));
 
         Median.main(args);
         MedianCut.main(args);

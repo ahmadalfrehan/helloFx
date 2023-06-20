@@ -209,9 +209,9 @@ public class EnterImage extends Application {
             selectedAlgorithm = "K-Means";
 
             KMeans kMeans = new KMeans();
-            BufferedImage bufferedImageK = KMeans.loadImage(image.getUrl());
-            BufferedImage dstImage = kMeans.calculate(bufferedImageK,
-                    50, 1);
+            // BufferedImage bufferedImageK = KMeans.loadImage(image.getUrl());
+            BufferedImage dstImage = kMeans.calculate(SwingFXUtils.fromFXImage(image, null),
+                    50, 3);
             saveImage = dstImage;
             imageView.setImage(SwingFXUtils.toFXImage(dstImage, null));
         });
