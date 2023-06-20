@@ -19,15 +19,9 @@ public class Median {
 
     static BufferedImage returnedImage;
 
-    public static void main(String[] args) {
+    public static void main2() {
         BufferedImage sampleImage =imagePath;
-        // try {
-        //     sampleImage = ImageIO.read(new File(imagePath));
-        // } catch (IOException e) {
-        //     e.printStackTrace();
-        //     return;
-        // }
-
+    
         int[][] flattenedImgArray = new int[sampleImage.getWidth() * sampleImage.getHeight()][5];
         int index = 0;
         for (int r = 0; r < sampleImage.getHeight(); r++) {

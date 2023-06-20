@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class EnterImage extends Application {
@@ -55,6 +56,7 @@ public class EnterImage extends Application {
     private Button showImageColorPalette;
 
     private String selectedAlgorithm;
+    private Button seachByColor;
 
     public static void main(String[] args) {
         launch(args);
@@ -63,7 +65,7 @@ public class EnterImage extends Application {
     private boolean isImageFile(Path path) {
         String fileName = path.getFileName().toString();
         String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
-        return extension.matches("png|jpe?g|gif|bmp"); // Modify the regex pattern as needed
+        return extension.matches("png|jpe?g|gif|bmp");
     }
 
     List<SameImageModel> images = new ArrayList<SameImageModel>();
@@ -88,6 +90,7 @@ public class EnterImage extends Application {
         showHistogramButton = new Button("Show Color Histogram");
         showImageColorPalette = new Button("Show Image Color Palette");
 
+        seachByColor = new Button("Search By Color");
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png"));
@@ -96,7 +99,7 @@ public class EnterImage extends Application {
 
         TilePane r = new TilePane();
 
-        Label l = new Label("This is a color picker example ");
+        Label l = new Label("This is a color picker");
         Label l1 = new Label("no selected color ");
 
         ColorPicker cp = new ColorPicker();
@@ -104,6 +107,7 @@ public class EnterImage extends Application {
         EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e) {
                 Color c = cp.getValue();
+
                 l1.setText("Red = " + c.getRed() + ", Green = " + c.getGreen()
                         + ", Blue = " + c.getBlue());
             }
@@ -171,7 +175,6 @@ public class EnterImage extends Application {
                         System.out.println(images.get(i).colorAndTheirName);
                         System.out.println(images.get(i).blue);
                     }
-                    // CalculateImage();
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -188,6 +191,10 @@ public class EnterImage extends Application {
             }
         });
 
+        seachByColor.setOnAction(e -> {
+
+        });
+
         indexedButton.setOnAction(e -> {
             selectedAlgorithm = "Indexed";
             if (image != null) {
@@ -199,7 +206,7 @@ public class EnterImage extends Application {
         });
         mediancutButton.setOnAction(e -> {
             Median median = new Median(SwingFXUtils.fromFXImage(image, null));
-            median.main(null);
+            Median.main2();
             BufferedImage outputImage = median.readyImage();
             saveImage = outputImage;
             imageView.setImage(SwingFXUtils.toFXImage(outputImage, null));
@@ -209,7 +216,7 @@ public class EnterImage extends Application {
             selectedAlgorithm = "K-Means";
 
             KMeans kMeans = new KMeans();
-            // BufferedImage bufferedImageK = KMeans.loadImage(image.getUrl());
+
             BufferedImage dstImage = kMeans.calculate(SwingFXUtils.fromFXImage(image, null),
                     50, 3);
             saveImage = dstImage;
@@ -274,6 +281,16 @@ public class EnterImage extends Application {
                 coun++;
             }
         }
+    }
+
+    public void CalculateImageByColor(Color color) {
+        // int coun = 0;
+        // for (int i = 0; i < images.size(); i++) {
+        //     Optional<String> firstKey = images.get(i).colorAndTheirName.keySet().stream().findFirst();
+        //     if (firstKey.isPresent()) {
+                
+        //     }
+        // }
     }
 
     public static boolean isConvergent(Long old, Long newI) {

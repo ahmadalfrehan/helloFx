@@ -98,7 +98,7 @@ public class App extends Application {
         Image inputImage = new Image(imagePath);
         Median median = new Median(SwingFXUtils.fromFXImage(inputImage, null));
 
-        Median.main(args);
+        Median.main2();
         MedianCut.main(args);
         KMeans kMeans = new KMeans();
         KMeans.loadImage(imagePath);
