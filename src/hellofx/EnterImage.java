@@ -157,7 +157,7 @@ public class EnterImage extends Application {
                         System.out.println(images.get(i).colorAndTheirName);
                         System.out.println(images.get(i).blue);
                     }
-                    CalculateImage();
+                    // CalculateImage();
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -195,9 +195,9 @@ public class EnterImage extends Application {
 
         mediancutButton.setOnAction(e -> {
             selectedAlgorithm = "Median Cut";
-            if (image != null) {
-                imageView.setImage(SwingFXUtils.toFXImage(saveImage, null));
-            }
+            CalculateImage();
+            HistogramFX histogramFX = new HistogramFX(images);
+            histogramFX.start(primaryStage);
         });
         showHistogramButton.setOnAction(e -> {
             Histogram.imagePath = image.getUrl();
@@ -209,7 +209,6 @@ public class EnterImage extends Application {
                 FileChooser saveFileChooser = new FileChooser();
                 saveFileChooser.setInitialFileName(selectedAlgorithm + "_" + "image.jpg");
                 saveFileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JPEG Images", "*.jpg"));
-
                 File selectedFile = saveFileChooser.showSaveDialog(primaryStage);
                 if (selectedFile != null) {
                     try {
@@ -230,48 +229,17 @@ public class EnterImage extends Application {
         BorderPane root = new BorderPane();
         root.setCenter(imageView);
         root.setRight(buttonsVBox);
+        // root.setTop(gridPane);
         root.setBottom(r);
 
         Scene scene = new Scene(root, 800, 600);
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        GridPane gridPane = new GridPane();
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(10));
-
-        // Populate the GridPane with images
-        int row = 0;
-        int col = 0;
-        for (SameImageModel image : images) {
-            ImageView imageView = new ImageView(new Image(image.getFilePath()));
-            imageView.setFitWidth(200);
-            imageView.setPreserveRatio(true);
-            gridPane.add(imageView, col, row);
-
-            col++;
-            if (col == 4) { // Adjust the number of columns as needed
-                col = 0;
-                row++;
-            }
-        }
-
-        // Create a Scene with the GridPane
-
-        
-        // Create a new Stage
-        Stage secondaryStage = new Stage();
-        secondaryStage.setScene(scene);
-        secondaryStage.setTitle("Image Grid");
-
-        // Show the new Stage
-        secondaryStage.show();
-    
     }
 
     public void CalculateImage() {
-        // List<SameImageModel> images = new ArrayList<>();
+
         SameImageModel targetImage = new SameImageModel(
                 images.get(0).colorAndTheirName,
                 images.get(0).filePath,
