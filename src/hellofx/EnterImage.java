@@ -26,6 +26,10 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class EnterImage extends Application {
     private Image image;
@@ -45,6 +49,12 @@ public class EnterImage extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private boolean isImageFile(Path path) {
+        String fileName = path.getFileName().toString();
+        String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+        return extension.matches("png|jpe?g|gif|bmp"); // Modify the regex pattern as needed
     }
 
     @Override
@@ -92,7 +102,25 @@ public class EnterImage extends Application {
         selectFolder.setOnAction(e -> {
             DirectoryChooser directoryChooser = new DirectoryChooser();
             File selectedDirectory = directoryChooser.showDialog(primaryStage);
-            if (selectedDirectory == null) {
+            if (selectedDirectory != null) {
+                try {
+                    List<File> imageFiles = Files.walk(selectedDirectory.toPath())
+                            .filter(p -> isImageFile(p))
+                            .map(Path::toFile)
+                            .collect(Collectors.toList());
+
+                    for (File imageFile : imageFiles) {
+                        Image image = new Image(imageFile.toURI().toString());
+                        Histogram.imagePath = image.getUrl();
+                        // Histogram histogram = new Histogram();
+                        Histogram.ImageHistogram d = new Histogram.ImageHistogram();
+
+
+                        System.out.println("Image file: " + imageFile.getName());
+                    }
+                } catch (IOException error) {
+                    error.printStackTrace();
+                }
             } else {
                 System.out.println(selectedDirectory.getAbsolutePath());
             }
