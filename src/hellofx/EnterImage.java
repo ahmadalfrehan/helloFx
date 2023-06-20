@@ -4,6 +4,18 @@ package hellofx;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.collections.*;
+import javafx.stage.Stage;
+import javafx.scene.text.Text.*;
+import javafx.scene.paint.*;
+import javafx.scene.text.*;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,6 +25,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -59,12 +72,52 @@ public class EnterImage extends Application {
         showHistogramButton = new Button("Show Color Histogram");
         showImageColorPalette = new Button("Show Image Color Palette");
 
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png"));
-        TilePane r = new TilePane();
+       
+        primaryStage.setTitle("creating color picker");
 
-        ColorPicker cp = new ColorPicker(Color.BLUE);
+		// create a tile pane
+		TilePane r = new TilePane();
+
+		// create a label
+		Label l = new Label("This is a color picker example ");
+		Label l1 = new Label("no selected color ");
+
+		// create a color picker
+		ColorPicker cp = new ColorPicker();
+
+		// create a event handler
+		EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+			public void handle(ActionEvent e)
+			{
+				// color
+				Color c = cp.getValue();
+
+				// set text of the label to RGB value of color
+				l1.setText("Red = " + c.getRed() + ", Green = " + c.getGreen()
+												+ ", Blue = " + c.getBlue());
+			}
+		};
+
+		// set listener
+		cp.setOnAction(event);
+
+		// add label
+		r.getChildren().add(l);
+		r.getChildren().add(cp);
+		r.getChildren().add(l1);
+
+		// create a scene
+		// Scene sc = new Scene(r, 500, 200);
+
+		// // set the scene
+		// primaryStage.setScene(sc);
+
+		// // s.show();
+        // ColorPicker cp = new ColorPicker(Color.BLUE);
         selectColor.setOnAction(e -> {
             // cp.
             Color c = cp.getValue();
@@ -115,6 +168,8 @@ public class EnterImage extends Application {
         mediancutButton.setOnAction(e -> {
             selectedAlgorithm = "Median Cut";
             if (image != null) {
+                // MedianCut medianCut  = new MedianCut();
+                // medianCut.
 
                 imageView.setImage(SwingFXUtils.toFXImage(saveImage, null));
             }
@@ -146,6 +201,7 @@ public class EnterImage extends Application {
         BorderPane root = new BorderPane();
         root.setCenter(imageView);
         root.setRight(buttonsVBox);
+        root.setBottom(r);
 
         Scene scene = new Scene(root, 800, 600);
         primaryStage.setScene(scene);
@@ -153,72 +209,4 @@ public class EnterImage extends Application {
 
     }
 }
-// Java Program to create color picker and add listener to it
-package hellofx;
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.collections.*;
-import javafx.stage.Stage;
-import javafx.scene.text.Text.*;
-import javafx.scene.paint.*;
-import javafx.scene.text.*;
-public class EnterImage extends Application {
-	// labels
-	Label l;
 
-	// launch the application
-	public void start(Stage s)
-	{
-		// set title for the stage
-		s.setTitle("creating color picker");
-
-		// create a tile pane
-		TilePane r = new TilePane();
-
-		// create a label
-		l = new Label("This is a color picker example ");
-		Label l1 = new Label("no selected color ");
-
-		// create a color picker
-		ColorPicker cp = new ColorPicker();
-
-		// create a event handler
-		EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent e)
-			{
-				// color
-				Color c = cp.getValue();
-
-				// set text of the label to RGB value of color
-				l1.setText("Red = " + c.getRed() + ", Green = " + c.getGreen()
-												+ ", Blue = " + c.getBlue());
-			}
-		};
-
-		// set listener
-		cp.setOnAction(event);
-
-		// add label
-		r.getChildren().add(l);
-		r.getChildren().add(cp);
-		r.getChildren().add(l1);
-
-		// create a scene
-		Scene sc = new Scene(r, 500, 200);
-
-		// set the scene
-		s.setScene(sc);
-
-		s.show();
-	}
-
-	public static void main(String args[])
-	{
-		// launch the application
-		launch(args);
-	}
-}
