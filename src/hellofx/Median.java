@@ -11,22 +11,22 @@ import javax.imageio.ImageIO;
 import javafx.scene.image.Image;
 
 public class Median {
-    static String imagePath = "";
+    static BufferedImage imagePath;
 
-    Median(String imgPath) {
+    Median(BufferedImage imgPath) {
         this.imagePath = imgPath;
     }
 
     static BufferedImage returnedImage;
 
     public static void main(String[] args) {
-        BufferedImage sampleImage = null;
-        try {
-            sampleImage = ImageIO.read(new File(imagePath));
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
+        BufferedImage sampleImage =imagePath;
+        // try {
+        //     sampleImage = ImageIO.read(new File(imagePath));
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        //     return;
+        // }
 
         int[][] flattenedImgArray = new int[sampleImage.getWidth() * sampleImage.getHeight()][5];
         int index = 0;

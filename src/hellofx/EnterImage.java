@@ -197,12 +197,23 @@ public class EnterImage extends Application {
                 imageView.setImage(SwingFXUtils.toFXImage(outputImage, null));
             }
         });
+        mediancutButton.setOnAction(e -> {
+            Median median = new Median(SwingFXUtils.fromFXImage(image, null));
+            median.main(null);
+            BufferedImage outputImage = median.readyImage();
+            saveImage = outputImage;
+            imageView.setImage(SwingFXUtils.toFXImage(outputImage, null));
+        });
 
         kmeansButton.setOnAction(e -> {
             selectedAlgorithm = "K-Means";
 
             KMeans kMeans = new KMeans();
-            KMeans.loadImage(image.getUrl());
+            BufferedImage bufferedImageK = KMeans.loadImage(image.getUrl());
+            BufferedImage dstImage = kMeans.calculate(bufferedImageK,
+                    50, 1);
+            saveImage = dstImage;
+            imageView.setImage(SwingFXUtils.toFXImage(dstImage, null));
         });
 
         searchSimilarImages.setOnAction(e -> {

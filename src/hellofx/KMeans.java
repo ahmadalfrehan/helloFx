@@ -31,7 +31,6 @@ public class KMeans {
         } else if (m.equals("-c")) {
             mode = MODE_CONTINUOUS;
         }
-
         KMeans kmeans = new KMeans();
 
         BufferedImage dstImage = kmeans.calculate(loadImage(src),
@@ -86,22 +85,21 @@ public class KMeans {
                 }
             }
             if (mode == MODE_ITERATIVE) {
-                // update clusters
+
                 for (int i = 0; i < clusters.length; i++) {
                     clusters[i].clear();
                 }
                 for (int y = 0; y < h; y++) {
                     for (int x = 0; x < w; x++) {
                         int clusterId = lut[w * y + x];
-                        // add pixels to cluster
+
                         clusters[clusterId].addPixel(
                                 image.getRGB(x, y));
                     }
                 }
             }
-
         }
-        // create result image
+
         BufferedImage result = new BufferedImage(w, h,
                 BufferedImage.TYPE_INT_RGB);
         for (int y = 0; y < h; y++) {
