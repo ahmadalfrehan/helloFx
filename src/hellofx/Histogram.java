@@ -4,6 +4,15 @@ import java.awt.image.BufferedImage;
 // import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -14,6 +23,7 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Data;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -26,8 +36,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class Histogram extends Application {
-
-    String defaultImage = "http://goo.gl/kYEQl";
+    static String imagePath = "C:/users/dell/desktop/flutter/ahmadalfrehan.png";
 
     @Override
     public void start(Stage primaryStage) {
@@ -38,17 +47,17 @@ public class Histogram extends Application {
                         + "javafx.runtime.version: " + System.getProperty("javafx.runtime.version"));
 
         TextField textSrc = new TextField();
-        textSrc.setText(defaultImage);
+
         Button btnDo = new Button("Do Histogram");
         ImageView imageView = new ImageView();
-        // imageView = new ImageView();
+
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(600);
         final CategoryAxis xAxis = new CategoryAxis();
         final NumberAxis yAxis = new NumberAxis();
         final LineChart<String, Number> chartHistogram = new LineChart<>(xAxis, yAxis);
         chartHistogram.setCreateSymbols(false);
-        Image image = new Image("C:/users/dell/desktop/flutter/ahmadalfrehan.png");
+        Image image = new Image(imagePath);
 
         btnDo.setOnAction((ActionEvent event) -> {
             imageView.setImage(image);
@@ -56,8 +65,9 @@ public class Histogram extends Application {
 
             ImageHistogram imageHistogram = new ImageHistogram();
             if (imageHistogram.isSuccess()) {
+                System.out.println(imageHistogram.getMaximmum());
                 chartHistogram.getData().addAll(
-                        // imageHistogram.getSeriesAlpha(),
+                        imageHistogram.getSeriesAlpha(),
                         imageHistogram.getSeriesRed(),
                         imageHistogram.getSeriesGreen(),
                         imageHistogram.getSeriesBlue());
@@ -100,10 +110,10 @@ public class Histogram extends Application {
         private boolean success;
 
         ImageHistogram() {
+            System.out.println(imagePath.substring(5, imagePath.length()));
             try {
-                image = ImageIO.read(new File("C:/users/dell/desktop/flutter/ahmadalfrehan.png"));
+                image = ImageIO.read(new File(imagePath.substring(5, imagePath.length())));
             } catch (IOException e) {
-
                 e.printStackTrace();
             }
 
@@ -138,6 +148,7 @@ public class Histogram extends Application {
             seriesBlue.setName("blue");
 
             for (int i = 0; i < 256; i++) {
+
                 seriesAlpha.getData().add(new XYChart.Data(String.valueOf(i), alpha[i]));
                 seriesRed.getData().add(new XYChart.Data(String.valueOf(i), red[i]));
                 seriesGreen.getData().add(new XYChart.Data(String.valueOf(i), green[i]));
@@ -145,6 +156,36 @@ public class Histogram extends Application {
             }
 
             success = true;
+        }
+
+        public static Map<String, Long> sortMapByValue(Map<String, Long> map) {
+            List<Map.Entry<String, Long>> entryList = new ArrayList<>(map.entrySet());
+
+            entryList.sort(Map.Entry.comparingByValue(Comparator.reverseOrder()));
+
+            Map<String, Long> sortedMap = new LinkedHashMap<>();
+
+            for (Map.Entry<String, Long> entry : entryList) {
+                sortedMap.put(entry.getKey(), entry.getValue());
+            }
+
+            return sortedMap;
+        }
+
+        public Map<String, Long> getMaximmum() {
+
+            Arrays.sort(red);
+            Arrays.sort(green);
+            Arrays.sort(blue);
+            Long redMax = red[255];
+            Long blueMax = blue[255];
+            Long greenMax = green[255];
+            Map<String, Long> map = new HashMap<String, Long>();
+            map.put("red", redMax);
+            map.put("blue", blueMax);
+            map.put("green", greenMax);
+            Map<String, Long> sortedMap = sortMapByValue(map);
+            return sortedMap;
         }
 
         public boolean isSuccess() {

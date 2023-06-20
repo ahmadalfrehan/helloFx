@@ -104,6 +104,9 @@ public class EnterImage extends Application {
                 try {
                     image = new Image(file.toURI().toString());
                     imageView.setImage(image);
+                    Histogram.imagePath = image.getUrl();
+                    Histogram histogram = new Histogram();
+                    histogram.start(primaryStage);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
