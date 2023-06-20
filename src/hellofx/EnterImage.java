@@ -23,15 +23,17 @@ import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class EnterImage extends Application {
@@ -59,6 +61,8 @@ public class EnterImage extends Application {
         String extension = fileName.substring(fileName.lastIndexOf(".") + 1);
         return extension.matches("png|jpe?g|gif|bmp"); // Modify the regex pattern as needed
     }
+
+    List<SameImageModel> images = new ArrayList<SameImageModel>();
 
     @Override
     public void start(Stage primaryStage) {
@@ -135,15 +139,24 @@ public class EnterImage extends Application {
                     image = new Image(file.toURI().toString());
                     imageView.setImage(image);
                     Histogram.imagePath = image.getUrl();
-                    Histogram histogram = new Histogram();
-                    histogram.start(primaryStage);
+                    GetHistogram.imagePath = image.getUrl().replaceAll("%20", "");
+                    GetHistogram getHistogram = new GetHistogram();
+                    System.out.println(getHistogram.getMaximmum());
+                    EnterImage enterImage = new EnterImage();
+                    SameImageModel sameImageModel = enterImage.new SameImageModel(getHistogram.getMaximmum(),
+                            image.getUrl());
+                    images.add(0, sameImageModel);
+                    for (int i = 0; i < images.size(); i++)
+                        System.out.println(images.get(i).filePath);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
         });
 
-        octreeButton.setOnAction(e -> {
+        octreeButton.setOnAction(e ->
+
+        {
             selectedAlgorithm = "Octree";
             if (image != null) {
                 BufferedImage outputImage = OctreeQuantizer.quantize(SwingFXUtils.fromFXImage(image, null));
@@ -165,7 +178,6 @@ public class EnterImage extends Application {
         kmeansButton.setOnAction(e -> {
             selectedAlgorithm = "K-Means";
             if (image != null) {
-
                 imageView.setImage(SwingFXUtils.toFXImage(saveImage, null));
             }
         });
@@ -176,7 +188,11 @@ public class EnterImage extends Application {
                 imageView.setImage(SwingFXUtils.toFXImage(saveImage, null));
             }
         });
-
+        showHistogramButton.setOnAction(e -> {
+            Histogram.imagePath = image.getUrl();
+            Histogram histogram = new Histogram();
+            histogram.start(primaryStage);
+        });
         saveButton.setOnAction(e -> {
             if (image != null && saveImage != null) {
                 FileChooser saveFileChooser = new FileChooser();
@@ -195,8 +211,8 @@ public class EnterImage extends Application {
         });
 
         VBox buttonsVBox = new VBox(10, chooseImageButton, selectFolder, octreeButton, kmeansButton, indexedButton,
-                mediancutButton,
-                saveButton, showHistogramButton, showImageColorPalette);
+                mediancutButton, saveButton, showHistogramButton,
+                showImageColorPalette);
         buttonsVBox.setAlignment(Pos.CENTER);
         buttonsVBox.setPadding(new Insets(10));
 
@@ -209,5 +225,15 @@ public class EnterImage extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+    }
+
+    class SameImageModel {
+        String filePath = "";
+        Map<String, Long> colorAndTheirName = new HashMap<String, Long>();
+
+        SameImageModel(Map<String, Long> map, String filePat) {
+            filePath = filePat;
+            colorAndTheirName = map;
+        };
     }
 }
