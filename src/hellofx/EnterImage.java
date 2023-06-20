@@ -17,6 +17,7 @@ import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +130,7 @@ public class EnterImage extends Application {
                     error.printStackTrace();
                 }
             } else {
-                System.out.println(selectedDirectory.getAbsolutePath());
+                // System.out.println(selectedDirectory.getAbsolutePath());
             }
         });
 
@@ -143,11 +145,20 @@ public class EnterImage extends Application {
                     GetHistogram getHistogram = new GetHistogram();
                     System.out.println(getHistogram.getMaximmum());
                     EnterImage enterImage = new EnterImage();
-                    SameImageModel sameImageModel = enterImage.new SameImageModel(getHistogram.getMaximmum(),
-                            image.getUrl());
+                    SameImageModel sameImageModel = enterImage.new SameImageModel(
+                            getHistogram.getMaximmum(),
+                            image.getUrl(),
+                            getHistogram.getMaximmum().get("red"),
+                            getHistogram.getMaximmum().get("green"),
+                            getHistogram.getMaximmum().get("blue"));
                     images.add(0, sameImageModel);
-                    for (int i = 0; i < images.size(); i++)
+                    for (int i = 0; i < images.size(); i++) {
                         System.out.println(images.get(i).filePath);
+                        System.out.println(images.get(i).colorAndTheirName);
+                        System.out.println(images.get(i).blue);
+                    }
+                    CalculateImage();
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -225,15 +236,79 @@ public class EnterImage extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        GridPane gridPane = new GridPane();
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.setPadding(new Insets(10));
+
+        // Populate the GridPane with images
+        int row = 0;
+        int col = 0;
+        for (SameImageModel image : images) {
+            ImageView imageView = new ImageView(new Image(image.getFilePath()));
+            imageView.setFitWidth(200);
+            imageView.setPreserveRatio(true);
+            gridPane.add(imageView, col, row);
+
+            col++;
+            if (col == 4) { // Adjust the number of columns as needed
+                col = 0;
+                row++;
+            }
+        }
+
+        // Create a Scene with the GridPane
+
+        
+        // Create a new Stage
+        Stage secondaryStage = new Stage();
+        secondaryStage.setScene(scene);
+        secondaryStage.setTitle("Image Grid");
+
+        // Show the new Stage
+        secondaryStage.show();
+    
+    }
+
+    public void CalculateImage() {
+        // List<SameImageModel> images = new ArrayList<>();
+        SameImageModel targetImage = new SameImageModel(
+                images.get(0).colorAndTheirName,
+                images.get(0).filePath,
+                images.get(0).red, images.get(0).green, images.get(0).blue);
+        List<SameImageModel> convergentImages = images.stream()
+                .filter(image -> image.calculateDistance(targetImage) < Integer.MAX_VALUE)
+                .toList();
+        for (SameImageModel image : convergentImages) {
+            System.out.println(image.filePath);
+            System.out.println(image.colorAndTheirName);
+            System.out.println(image.blue);
+        }
     }
 
     class SameImageModel {
+        private Long blue;
+        private Long red;
+        private Long green;
+
         String filePath = "";
+
         Map<String, Long> colorAndTheirName = new HashMap<String, Long>();
 
-        SameImageModel(Map<String, Long> map, String filePat) {
+        public double calculateDistance(SameImageModel other) {
+            Long blueDiff = this.blue - other.blue;
+            Long redDiff = this.red - other.red;
+            Long greenDiff = this.green - other.green;
+            return Math.sqrt(blueDiff * blueDiff + redDiff * redDiff + greenDiff * greenDiff);
+        }
+
+        SameImageModel(Map<String, Long> map, String filePat, Long red, Long green, Long blue) {
             filePath = filePat;
             colorAndTheirName = map;
+            this.blue = blue;
+            this.red = red;
+            this.green = green;
+
         };
     }
 }
