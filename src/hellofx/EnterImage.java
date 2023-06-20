@@ -47,6 +47,7 @@ public class EnterImage extends Application {
     private Button kmeansButton;
     private Button indexedButton;
     private Button mediancutButton;
+    private Button searchSimilarImages;
     private Button showFiltedImage;
     private Button selectFolder;
     private Button saveButton;
@@ -83,6 +84,7 @@ public class EnterImage extends Application {
         mediancutButton = new Button("Median Cut");
         showFiltedImage = new Button("ShowFiltered Image");
         saveButton = new Button("Save");
+        searchSimilarImages = new Button("Search Similar Images");
         showHistogramButton = new Button("Show Color Histogram");
         showImageColorPalette = new Button("Show Image Color Palette");
 
@@ -177,9 +179,7 @@ public class EnterImage extends Application {
             }
         });
 
-        octreeButton.setOnAction(e ->
-
-        {
+        octreeButton.setOnAction(e -> {
             selectedAlgorithm = "Octree";
             if (image != null) {
                 BufferedImage outputImage = OctreeQuantizer.quantize(SwingFXUtils.fromFXImage(image, null));
@@ -200,12 +200,12 @@ public class EnterImage extends Application {
 
         kmeansButton.setOnAction(e -> {
             selectedAlgorithm = "K-Means";
-            if (image != null) {
-                imageView.setImage(SwingFXUtils.toFXImage(saveImage, null));
-            }
+
+            KMeans kMeans = new KMeans();
+            KMeans.loadImage(image.getUrl());
         });
 
-        mediancutButton.setOnAction(e -> {
+        searchSimilarImages.setOnAction(e -> {
             CalculateImage();
         });
 
@@ -218,6 +218,7 @@ public class EnterImage extends Application {
             Histogram histogram = new Histogram();
             histogram.start(primaryStage);
         });
+
         saveButton.setOnAction(e -> {
             if (image != null && saveImage != null) {
                 FileChooser saveFileChooser = new FileChooser();
@@ -234,7 +235,8 @@ public class EnterImage extends Application {
             }
         });
 
-        VBox buttonsVBox = new VBox(10, chooseImageButton, selectFolder, showFiltedImage, octreeButton, kmeansButton,
+        VBox buttonsVBox = new VBox(10, chooseImageButton, selectFolder, searchSimilarImages,
+                showFiltedImage, octreeButton, kmeansButton,
                 indexedButton,
                 mediancutButton, saveButton, showHistogramButton,
                 showImageColorPalette);
@@ -252,10 +254,6 @@ public class EnterImage extends Application {
     }
 
     public void CalculateImage() {
-        SameImageModel targetImage = new SameImageModel(
-                images.get(0).colorAndTheirName,
-                images.get(0).filePath,
-                images.get(0).red, images.get(0).green, images.get(0).blue);
         int coun = 0;
         for (int i = 1; i < images.size(); i++) {
             if (isConvergent(images.get(0).red, images.get(i).red) ||
@@ -264,14 +262,6 @@ public class EnterImage extends Application {
                 imagesAnother.add(coun, images.get(i));
                 coun++;
             }
-        }
-        List<SameImageModel> convergentImages = images.stream()
-                .filter(image -> image.calculateDistance(targetImage) < Long.MAX_VALUE)
-                .toList();
-        for (SameImageModel image : convergentImages) {
-            System.out.println(image.filePath);
-            System.out.println(image.colorAndTheirName);
-            System.out.println(image.blue);
         }
     }
 

@@ -96,19 +96,10 @@ public class App extends Application {
         String imagePath = "C:/users/dell/desktop/logo.png";
 
         Image inputImage = new Image(imagePath);
-        Median median = new Median();
+        Median median = new Median(inputImage.getUrl());
 
         Median.main(args);
-        // BufferedImage buffereImage = SwingFXUtils.fromFXImage(inputImage, null);
-        // // BufferedImage quantizedImage = median.quantize(buffereImage, 10);
-        // // MedianCut.saveImage("C:/Users/User/Desktop/aan5.png", quantizedImage);
-        // String outputFolderPath = "C:/Users/dell/Desktop/";
-        // // Median.savedImage(quantizedImage, outputFolderPath, "image.png");
-
-        // // Median.main(args);
-        // MedianCut medianCut = new MedianCut();
         MedianCut.main(args);
-
         KMeans kMeans = new KMeans();
         KMeans.loadImage(imagePath);
         BufferedImage bufferedImage = kMeans.calculate(KMeans.loadImage(imagePath), 50, 3);

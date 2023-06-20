@@ -8,12 +8,21 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
+import javafx.scene.image.Image;
+
 public class Median {
+    static String imagePath = "";
+
+    Median(String imgPath) {
+        this.imagePath = imgPath;
+    }
+
+    static BufferedImage returnedImage;
 
     public static void main(String[] args) {
         BufferedImage sampleImage = null;
         try {
-            sampleImage = ImageIO.read(new File("C:/Users/dell/Desktop/girl.jpg"));
+            sampleImage = ImageIO.read(new File(imagePath));
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -38,11 +47,16 @@ public class Median {
         // Save the modified image
         File outputImageFile = new File(System.getProperty("user.home") + "/Desktop/output4.png");
         try {
+            returnedImage = sampleImage;
             ImageIO.write(sampleImage, "png", outputImageFile);
             System.out.println("image saved successfully: " + outputImageFile.getAbsolutePath());
         } catch (IOException e) {
             System.out.println("Failed to save image: " + e.getMessage());
         }
+    }
+
+    public BufferedImage readyImage() {
+        return returnedImage;
     }
 
     public static void splitIntoBuckets(BufferedImage img, int[][] imgArr, int depth) {
@@ -121,16 +135,15 @@ public class Median {
 
     public static void sortByColorSpace(int[][] arr, int space) {
         Arrays.sort(arr, (a, b) -> Integer.compare(a[space], b[space]));
-  
-      
+
         // for (int i = 0; i < arr.length - 1; i++) {
-        //     for (int j = 0; j < arr.length - i - 1; j++) {
-        //         if (arr[j][space] > arr[j + 1][space]) {
-        //             int[] temp = arr[j];
-        //             arr[j] = arr[j + 1];
-        //             arr[j + 1] = temp;
-        //         }
-        //     }
+        // for (int j = 0; j < arr.length - i - 1; j++) {
+        // if (arr[j][space] > arr[j + 1][space]) {
+        // int[] temp = arr[j];
+        // arr[j] = arr[j + 1];
+        // arr[j + 1] = temp;
+        // }
+        // }
         // }
     }
 
