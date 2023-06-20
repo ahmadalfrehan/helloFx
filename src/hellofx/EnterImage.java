@@ -18,8 +18,6 @@ import javafx.scene.paint.*;
 import javafx.scene.text.*;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -27,6 +25,7 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.paint.Color;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -44,7 +43,7 @@ public class EnterImage extends Application {
     private Button kmeansButton;
     private Button indexedButton;
     private Button mediancutButton;
-    private Button selectColor;
+    private Button selectFolder;
     private Button saveButton;
     private Button showHistogramButton;
     private Button showImageColorPalette;
@@ -63,7 +62,7 @@ public class EnterImage extends Application {
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(600);
         chooseImageButton = new Button("Choose Image");
-        selectColor = new Button("select Color");
+        selectFolder = new Button("select Folder");
         octreeButton = new Button("Octree");
         kmeansButton = new Button("K-Means");
         indexedButton = new Button("Indexed");
@@ -72,60 +71,43 @@ public class EnterImage extends Application {
         showHistogramButton = new Button("Show Color Histogram");
         showImageColorPalette = new Button("Show Image Color Palette");
 
-
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png"));
-       
+
         primaryStage.setTitle("creating color picker");
 
-		// create a tile pane
-		TilePane r = new TilePane();
+        TilePane r = new TilePane();
 
-		// create a label
-		Label l = new Label("This is a color picker example ");
-		Label l1 = new Label("no selected color ");
+        Label l = new Label("This is a color picker example ");
+        Label l1 = new Label("no selected color ");
 
-		// create a color picker
-		ColorPicker cp = new ColorPicker();
+        ColorPicker cp = new ColorPicker();
 
-		// create a event handler
-		EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
-			public void handle(ActionEvent e)
-			{
-				// color
-				Color c = cp.getValue();
+        EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e) {
 
-				// set text of the label to RGB value of color
-				l1.setText("Red = " + c.getRed() + ", Green = " + c.getGreen()
-												+ ", Blue = " + c.getBlue());
-			}
-		};
+                Color c = cp.getValue();
 
-		// set listener
-		cp.setOnAction(event);
+                l1.setText("Red = " + c.getRed() + ", Green = " + c.getGreen()
+                        + ", Blue = " + c.getBlue());
+            }
+        };
 
-		// add label
-		r.getChildren().add(l);
-		r.getChildren().add(cp);
-		r.getChildren().add(l1);
+        cp.setOnAction(event);
 
-		// create a scene
-		// Scene sc = new Scene(r, 500, 200);
-
-		// // set the scene
-		// primaryStage.setScene(sc);
-
-		// // s.show();
-        // ColorPicker cp = new ColorPicker(Color.BLUE);
-        selectColor.setOnAction(e -> {
-            // cp.
-            Color c = cp.getValue();
-            // CustomColorDialog dialog = new CustomColorDialog(primaryStage.getOwner());
-            // dialog.show();
-
+        r.getChildren().add(l);
+        r.getChildren().add(cp);
+        r.getChildren().add(l1);
+        selectFolder.setOnAction(e -> {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            File selectedDirectory = directoryChooser.showDialog(primaryStage);
+            if (selectedDirectory == null) {
+            } else {
+                System.out.println(selectedDirectory.getAbsolutePath());
+            }
         });
-        // r.getChildren(cp);
+
         chooseImageButton.setOnAction(e -> {
             File file = fileChooser.showOpenDialog(primaryStage);
             if (file != null) {
@@ -168,9 +150,7 @@ public class EnterImage extends Application {
         mediancutButton.setOnAction(e -> {
             selectedAlgorithm = "Median Cut";
             if (image != null) {
-                // MedianCut medianCut  = new MedianCut();
-                // medianCut.
-
+                
                 imageView.setImage(SwingFXUtils.toFXImage(saveImage, null));
             }
         });
@@ -192,7 +172,7 @@ public class EnterImage extends Application {
             }
         });
 
-        VBox buttonsVBox = new VBox(10, chooseImageButton, selectColor, octreeButton, kmeansButton, indexedButton,
+        VBox buttonsVBox = new VBox(10, chooseImageButton, selectFolder, octreeButton, kmeansButton, indexedButton,
                 mediancutButton,
                 saveButton, showHistogramButton, showImageColorPalette);
         buttonsVBox.setAlignment(Pos.CENTER);
@@ -209,4 +189,3 @@ public class EnterImage extends Application {
 
     }
 }
-
