@@ -167,5 +167,4 @@ public class Histogram extends Application {
             return seriesBlue;
         }
     }
-
 }
