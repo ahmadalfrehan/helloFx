@@ -1,4 +1,3 @@
-
 package hellofx;
 
 import javafx.application.Application;
@@ -7,6 +6,11 @@ import javafx.geometry.Insets;
 
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.util.StringConverter;
+import javafx.util.converter.DoubleStringConverter;
+import java.text.DecimalFormat;
+import java.text.ParsePosition;
+
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -31,12 +35,16 @@ import java.io.IOException;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+// import java.util.stream.Collectors;
 import java.util.stream.Collectors;
 
 public class EnterImage extends Application {
@@ -58,6 +66,8 @@ public class EnterImage extends Application {
     private String selectedAlgorithm;
     private Button seachByColor;
 
+    private TextField maxSizeTextField;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -70,9 +80,19 @@ public class EnterImage extends Application {
 
     List<SameImageModel> images = new ArrayList<SameImageModel>();
     List<SameImageModel> imagesAnother = new ArrayList<SameImageModel>();
+    
 
     @Override
     public void start(Stage primaryStage) {
+
+        DatePicker datePicker = new DatePicker();
+
+        maxSizeTextField = new TextField();
+        maxSizeTextField.setPromptText("Max Image Size (MB)");
+
+        TextFormatter<Double> textFormatter = new TextFormatter<>(this::filterDoubleInput);
+        maxSizeTextField.setTextFormatter(textFormatter);
+
         primaryStage.setTitle("Enter Image to search");
 
         imageView = new ImageView();
@@ -135,12 +155,21 @@ public class EnterImage extends Application {
                         GetHistogram.imagePath = image.getUrl().replaceAll("%20", "");
                         GetHistogram getHistogram = new GetHistogram();
                         EnterImage enterImage = new EnterImage();
+                        Path filePath = imageFile.toPath();
+                        BasicFileAttributes attrs = Files.readAttributes(filePath, BasicFileAttributes.class);
+                        Instant instant = attrs.creationTime().toInstant();
+                        LocalDate date = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+                        double sizeInBytes = imageFile.length();
+                        double sizeInMegabytes = sizeInBytes / (1024 * 1024);
+
                         SameImageModel sameImageModel = enterImage.new SameImageModel(
                                 getHistogram.getMaximmum(),
                                 image.getUrl(),
                                 getHistogram.getMaximmum().get("red"),
                                 getHistogram.getMaximmum().get("green"),
-                                getHistogram.getMaximmum().get("blue"));
+                                getHistogram.getMaximmum().get("blue"),
+                                date,
+                                sizeInMegabytes);
                         images.add(count, sameImageModel);
                     }
                 } catch (IOException error) {
@@ -163,12 +192,21 @@ public class EnterImage extends Application {
                     GetHistogram getHistogram = new GetHistogram();
                     System.out.println(getHistogram.getMaximmum());
                     EnterImage enterImage = new EnterImage();
+                    Path filePath = file.toPath();
+                    BasicFileAttributes attrs = Files.readAttributes(filePath, BasicFileAttributes.class);
+                    Instant instant = attrs.creationTime().toInstant();
+                    LocalDate date = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+                    double sizeInBytes = file.length();
+                    double sizeInMegabytes = sizeInBytes / (1024 * 1024);
+
                     SameImageModel sameImageModel = enterImage.new SameImageModel(
                             getHistogram.getMaximmum(),
                             image.getUrl(),
                             getHistogram.getMaximmum().get("red"),
                             getHistogram.getMaximmum().get("green"),
-                            getHistogram.getMaximmum().get("blue"));
+                            getHistogram.getMaximmum().get("blue"),
+                            date,
+                            sizeInMegabytes);
                     images.add(0, sameImageModel);
                     for (int i = 0; i < images.size(); i++) {
                         System.out.println(images.get(i).filePath);
@@ -224,7 +262,27 @@ public class EnterImage extends Application {
         });
 
         searchSimilarImages.setOnAction(e -> {
-            CalculateImage();
+            LocalDate selectedDate = datePicker.getValue();
+
+            Double maxSize = null;
+            String maxSizeText = maxSizeTextField.getText();
+            if (!maxSizeText.isEmpty()) {
+                maxSize = Double.parseDouble(maxSizeText);
+            }
+
+            if (selectedDate != null) {
+                if (maxSize != null) {
+                    CalculateImage(selectedDate, maxSize);
+                } else {
+                    CalculateImage(selectedDate, null);
+                }
+            } else {
+                if (maxSize != null) {
+                    CalculateImage(null, maxSize);
+                } else {
+                    CalculateImage(null, null);
+                }
+            }
         });
 
         showFiltedImage.setOnAction(e -> {
@@ -257,7 +315,7 @@ public class EnterImage extends Application {
                 showFiltedImage, octreeButton, kmeansButton,
                 indexedButton,
                 mediancutButton, saveButton, showHistogramButton,
-                showImageColorPalette);
+                showImageColorPalette, datePicker, maxSizeTextField);
         buttonsVBox.setAlignment(Pos.CENTER);
         buttonsVBox.setPadding(new Insets(10));
         BorderPane root = new BorderPane();
@@ -271,14 +329,65 @@ public class EnterImage extends Application {
 
     }
 
-    public void CalculateImage() {
+    private TextFormatter.Change filterDoubleInput(TextFormatter.Change change) {
+        String newText = change.getControlNewText();
+        DecimalFormat decimalFormat = new DecimalFormat("#.###");
+        ParsePosition parsePosition = new ParsePosition(0);
+        Number parsedNumber = decimalFormat.parse(newText, parsePosition);
+        if (newText.isEmpty() || parsePosition.getIndex() == newText.length() && parsedNumber != null) {
+            return change;
+        } else {
+            return null;
+        }
+    }
+
+    public void CalculateImage(LocalDate targetDate, Double maxSize) {
         int coun = 0;
-        for (int i = 1; i < images.size(); i++) {
-            if (isConvergent(images.get(0).red, images.get(i).red) ||
-                    isConvergent(images.get(0).green, images.get(i).green) ||
-                    isConvergent(images.get(0).blue, images.get(i).blue)) {
-                imagesAnother.add(coun, images.get(i));
-                coun++;
+        if (targetDate == null) {
+            if (maxSize == null) {
+                for (int i = 1; i < images.size(); i++) {
+                    if (isConvergent(images.get(0).red, images.get(i).red) ||
+                            isConvergent(images.get(0).green, images.get(i).green) ||
+                            isConvergent(images.get(0).blue, images.get(i).blue)) {
+                        imagesAnother.add(coun, images.get(i));
+                        coun++;
+                    }
+                }
+            } else {
+                for (int i = 1; i < images.size(); i++) {
+                    if (images.get(0).getSize() <= maxSize) {
+                        if (isConvergent(images.get(0).red, images.get(i).red) ||
+                                isConvergent(images.get(0).green, images.get(i).green) ||
+                                isConvergent(images.get(0).blue, images.get(i).blue)) {
+                            imagesAnother.add(coun, images.get(i));
+                            coun++;
+                        }
+                    }
+                }
+            }
+        } else {
+            if (maxSize == null) {
+                for (int i = 1; i < images.size(); i++) {
+                    if (images.get(0).getDate().equals(targetDate)) {
+                        if (isConvergent(images.get(0).red, images.get(i).red) ||
+                                isConvergent(images.get(0).green, images.get(i).green) ||
+                                isConvergent(images.get(0).blue, images.get(i).blue)) {
+                            imagesAnother.add(coun, images.get(i));
+                            coun++;
+                        }
+                    }
+                }
+            } else {
+                for (int i = 1; i < images.size(); i++) {
+                    if (images.get(0).getDate().equals(targetDate) && images.get(0).getSize() <= maxSize) {
+                        if (isConvergent(images.get(0).red, images.get(i).red) ||
+                                isConvergent(images.get(0).green, images.get(i).green) ||
+                                isConvergent(images.get(0).blue, images.get(i).blue)) {
+                            imagesAnother.add(coun, images.get(i));
+                            coun++;
+                        }
+                    }
+                }
             }
         }
     }
@@ -305,6 +414,8 @@ public class EnterImage extends Application {
         private Long blue;
         private Long red;
         private Long green;
+        private LocalDate date;
+        private Double size;
 
         String filePath = "";
 
@@ -317,12 +428,21 @@ public class EnterImage extends Application {
             return Math.sqrt(blueDiff * blueDiff + redDiff * redDiff + greenDiff * greenDiff);
         }
 
-        SameImageModel(Map<String, Long> map, String filePat, Long red, Long green, Long blue) {
+        public LocalDate getDate() {
+            return date;
+        }
+        public Double getSize() {
+            return size;
+        }
+
+        SameImageModel(Map<String, Long> map, String filePat, Long red, Long green, Long blue, LocalDate date, Double size) {
             filePath = filePat;
             colorAndTheirName = map;
             this.blue = blue;
             this.red = red;
             this.green = green;
+            this.date = date;
+            this.size = size;
 
         };
     }
