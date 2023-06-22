@@ -95,7 +95,7 @@ public class ColorSearch extends Application {
             }
         });
 
-        // Add event handler for search button
+    
         searchButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {

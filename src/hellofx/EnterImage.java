@@ -1,33 +1,47 @@
 package hellofx;
+
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
+
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+
 import javafx.stage.Stage;
+
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
+
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
+
+import hellofx.imported.Cutpart;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+// import java.util.stream.Collectors;
 import java.util.stream.Collectors;
+
 public class EnterImage extends Application {
     private Image image;
     private BufferedImage saveImage;
@@ -44,8 +58,10 @@ public class EnterImage extends Application {
     private Button showHistogramButton;
     private Button showImageColorPalette;
 
+    private Button cutImages;
     private String selectedAlgorithm;
     private Button seachByColor;
+    private Button seachByColor2;
 
     public static void main(String[] args) {
         launch(args);
@@ -58,7 +74,6 @@ public class EnterImage extends Application {
     }
 
     List<SameImageModel> images = new ArrayList<SameImageModel>();
-    List<SameImageModel> forColors = new ArrayList<SameImageModel>();
     List<SameImageModel> imagesAnother = new ArrayList<SameImageModel>();
 
     @Override
@@ -78,20 +93,15 @@ public class EnterImage extends Application {
         saveButton = new Button("Save");
         searchSimilarImages = new Button("Search Similar Images");
         showHistogramButton = new Button("Show Color Histogram");
-        seachByColor = new Button("Search By Color WindowTwo");
         showImageColorPalette = new Button("Show Image Color Palette");
-
-        // seachByColor = new Button("Search By Color");
+        cutImages = new Button("Cut image");
+        seachByColor = new Button("Search By Color");
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png"));
-
+        seachByColor2 = new Button("select Color And Filter");
         primaryStage.setTitle("creating color picker");
 
-        seachByColor.setOnAction(e -> {
-            ColorSearch colorSearch = new ColorSearch();
-            colorSearch.start(primaryStage);
-        });
         TilePane r = new TilePane();
 
         Label l = new Label("This is a color picker");
@@ -102,32 +112,25 @@ public class EnterImage extends Application {
         EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e) {
                 Color c = cp.getValue();
-                cp.show();
 
-                Color selectedColor = cp.getValue();
-                int red = (int) (selectedColor.getRed() * 255);
-                int green = (int) (selectedColor.getGreen() * 255);
-                int blue = (int) (selectedColor.getBlue() * 255);
-                System.out.println(red);
-                System.out.println(blue);
-                System.out.println(green);
-                EnterImage enterImage = new EnterImage();
-
-                Map<String, Long> map = new HashMap<String, Long>();
-                // SameImageModel sameImageModel = enterImage.new SameImageModel(
-                // // map.put("e",red),
-                // map.put("STYLESHEET_CASPIAN", red),
-                // image.getUrl(),
-                // red,
-                // green,
-                // blue);
-                // forColors.add(0, sameImageModel);
                 l1.setText("Red = " + c.getRed() + ", Green = " + c.getGreen()
                         + ", Blue = " + c.getBlue());
             }
         };
 
-        cp.setOnAction(event);
+        cp.setOnAction(e -> {
+
+        });
+
+        cutImages.setOnAction(e -> {
+            Cutpart cutpart = new Cutpart();
+            cutpart.start(primaryStage);
+        });
+        seachByColor2.setOnAction(e -> {
+            ColorSearch colorSearch = new ColorSearch();
+            colorSearch.start(primaryStage);
+        });
+
         r.getChildren().add(l);
         r.getChildren().add(cp);
         r.getChildren().add(l1);
@@ -144,7 +147,7 @@ public class EnterImage extends Application {
                             .collect(Collectors.toList());
                     count = 0;
                     for (File imageFile : imageFiles) {
-                        count += 1;
+
                         Image image = new Image(imageFile.toURI().toString());
                         GetHistogram.imagePath = image.getUrl().replaceAll("%20", "");
                         GetHistogram getHistogram = new GetHistogram();
@@ -152,10 +155,12 @@ public class EnterImage extends Application {
                         SameImageModel sameImageModel = enterImage.new SameImageModel(
                                 getHistogram.getMaximmum(),
                                 image.getUrl(),
+                                image,
                                 getHistogram.getMaximmum().get("red"),
                                 getHistogram.getMaximmum().get("green"),
                                 getHistogram.getMaximmum().get("blue"));
                         images.add(count, sameImageModel);
+                        count += 1;
                     }
                 } catch (IOException error) {
                     error.printStackTrace();
@@ -180,6 +185,7 @@ public class EnterImage extends Application {
                     SameImageModel sameImageModel = enterImage.new SameImageModel(
                             getHistogram.getMaximmum(),
                             image.getUrl(),
+                            image,
                             getHistogram.getMaximmum().get("red"),
                             getHistogram.getMaximmum().get("green"),
                             getHistogram.getMaximmum().get("blue"));
@@ -203,6 +209,20 @@ public class EnterImage extends Application {
                 saveImage = outputImage;
                 imageView.setImage(SwingFXUtils.toFXImage(outputImage, null));
             }
+        });
+
+        seachByColor.setOnAction(e -> {
+            cp.show();
+            Color selectedColor = cp.getValue();
+            // Get the RGB values of the picked color
+            int red = (int) (selectedColor.getRed() * 255);
+            int green = (int) (selectedColor.getGreen() * 255);
+            int blue = (int) (selectedColor.getBlue() * 255);
+
+            // Create an RGB color using the RGB values
+            Color rgbColor = Color.rgb(red, green, blue);
+            CalculateImageByColor(rgbColor);
+
         });
 
         indexedButton.setOnAction(e -> {
@@ -264,9 +284,9 @@ public class EnterImage extends Application {
         });
 
         VBox buttonsVBox = new VBox(10, chooseImageButton, selectFolder, searchSimilarImages,
-                showFiltedImage, seachByColor, octreeButton, kmeansButton,
-                indexedButton,
-                mediancutButton, saveButton, showHistogramButton,
+                showFiltedImage, octreeButton, kmeansButton,
+                indexedButton, seachByColor, cutImages,
+                mediancutButton, saveButton, showHistogramButton, seachByColor2,
                 showImageColorPalette);
         buttonsVBox.setAlignment(Pos.CENTER);
         buttonsVBox.setPadding(new Insets(10));
@@ -279,6 +299,28 @@ public class EnterImage extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+    }
+
+    public static Image convertToRGB(Image image) {
+        int width = (int) image.getWidth();
+        int height = (int) image.getHeight();
+
+        WritableImage writableImage = new WritableImage(width, height);
+        PixelReader pixelReader = image.getPixelReader();
+
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Color color = pixelReader.getColor(x, y);
+                int red = (int) (color.getRed() * 255);
+                int green = (int) (color.getGreen() * 255);
+                int blue = (int) (color.getBlue() * 255);
+
+                Color rgbColor = Color.rgb(red, green, blue);
+                writableImage.getPixelWriter().setColor(x, y, rgbColor);
+            }
+        }
+
+        return writableImage;
     }
 
     public void CalculateImage() {
@@ -294,14 +336,35 @@ public class EnterImage extends Application {
     }
 
     public void CalculateImageByColor(Color color) {
-        // int coun = 0;
-        // for (int i = 0; i < images.size(); i++) {
-        // Optional<String> firstKey =
-        // images.get(i).colorAndTheirName.keySet().stream().findFirst();
-        // if (firstKey.isPresent()) {
+        imagesAnother.clear(); // Clear the previous search results
+        int count = 0;
+        for (int i = 0; i < images.size(); i++) {
+            SameImageModel currentImage = images.get(i);
+            // image=convertToRGB(currentImage.image) ;
+            // Color currentColor = Color.rgb(
+            // currentImage.red.intValue(),
+            // currentImage.green.intValue(),
+            // currentImage.blue.intValue()
+            // );
+            // Clamp the color values to the range of 0-255
+            int red = clamp(currentImage.red.intValue(), 0, 255);
+            int green = clamp(currentImage.green.intValue(), 0, 255);
+            int blue = clamp(currentImage.blue.intValue(), 0, 255);
 
-        // }
-        // }
+            Color currentColor = Color.rgb(red, green, blue);
+
+            if (convergent(color, currentColor)) {
+                imagesAnother.add(count, currentImage);
+                System.out.println("====CalculateImageByColor====");
+                count++;
+            }
+
+        }
+
+    }
+
+    public static int clamp(int value, int min, int max) {
+        return Math.max(min, Math.min(max, value));
     }
 
     public static boolean isConvergent(Long old, Long newI) {
@@ -311,12 +374,24 @@ public class EnterImage extends Application {
         return false;
     }
 
+    public static boolean convergent(Color color1, Color color2) {
+        double redDiff = Math.abs(color1.getRed() - color2.getRed());
+        double greenDiff = Math.abs(color1.getGreen() - color2.getGreen());
+        double blueDiff = Math.abs(color1.getBlue() - color2.getBlue());
+
+        // Adjust the threshold value according to your needs
+        double threshold = 0.1;
+
+        return redDiff <= threshold && greenDiff <= threshold && blueDiff <= threshold;
+    }
+
     class SameImageModel {
         private Long blue;
         private Long red;
         private Long green;
 
         String filePath = "";
+        Image image;
 
         Map<String, Long> colorAndTheirName = new HashMap<String, Long>();
 
@@ -327,7 +402,7 @@ public class EnterImage extends Application {
             return Math.sqrt(blueDiff * blueDiff + redDiff * redDiff + greenDiff * greenDiff);
         }
 
-        SameImageModel(Map<String, Long> map, String filePat, Long red, Long green, Long blue) {
+        SameImageModel(Map<String, Long> map, String filePat, Image image, Long red, Long green, Long blue) {
             filePath = filePat;
             colorAndTheirName = map;
             this.blue = blue;
@@ -336,4 +411,5 @@ public class EnterImage extends Application {
 
         };
     }
+
 }
