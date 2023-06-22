@@ -1,44 +1,33 @@
-
 package hellofx;
-
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
-
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-
 import javafx.stage.Stage;
-
 import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 public class EnterImage extends Application {
     private Image image;
     private BufferedImage saveImage;
@@ -69,6 +58,7 @@ public class EnterImage extends Application {
     }
 
     List<SameImageModel> images = new ArrayList<SameImageModel>();
+    List<SameImageModel> forColors = new ArrayList<SameImageModel>();
     List<SameImageModel> imagesAnother = new ArrayList<SameImageModel>();
 
     @Override
@@ -88,15 +78,20 @@ public class EnterImage extends Application {
         saveButton = new Button("Save");
         searchSimilarImages = new Button("Search Similar Images");
         showHistogramButton = new Button("Show Color Histogram");
+        seachByColor = new Button("Search By Color WindowTwo");
         showImageColorPalette = new Button("Show Image Color Palette");
 
-        seachByColor = new Button("Search By Color");
+        // seachByColor = new Button("Search By Color");
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png"));
 
         primaryStage.setTitle("creating color picker");
 
+        seachByColor.setOnAction(e -> {
+            ColorSearch colorSearch = new ColorSearch();
+            colorSearch.start(primaryStage);
+        });
         TilePane r = new TilePane();
 
         Label l = new Label("This is a color picker");
@@ -107,7 +102,26 @@ public class EnterImage extends Application {
         EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e) {
                 Color c = cp.getValue();
+                cp.show();
 
+                Color selectedColor = cp.getValue();
+                int red = (int) (selectedColor.getRed() * 255);
+                int green = (int) (selectedColor.getGreen() * 255);
+                int blue = (int) (selectedColor.getBlue() * 255);
+                System.out.println(red);
+                System.out.println(blue);
+                System.out.println(green);
+                EnterImage enterImage = new EnterImage();
+
+                Map<String, Long> map = new HashMap<String, Long>();
+                // SameImageModel sameImageModel = enterImage.new SameImageModel(
+                // // map.put("e",red),
+                // map.put("STYLESHEET_CASPIAN", red),
+                // image.getUrl(),
+                // red,
+                // green,
+                // blue);
+                // forColors.add(0, sameImageModel);
                 l1.setText("Red = " + c.getRed() + ", Green = " + c.getGreen()
                         + ", Blue = " + c.getBlue());
             }
@@ -191,10 +205,6 @@ public class EnterImage extends Application {
             }
         });
 
-        seachByColor.setOnAction(e -> {
-
-        });
-
         indexedButton.setOnAction(e -> {
             selectedAlgorithm = "Indexed";
             if (image != null) {
@@ -254,7 +264,7 @@ public class EnterImage extends Application {
         });
 
         VBox buttonsVBox = new VBox(10, chooseImageButton, selectFolder, searchSimilarImages,
-                showFiltedImage, octreeButton, kmeansButton,
+                showFiltedImage, seachByColor, octreeButton, kmeansButton,
                 indexedButton,
                 mediancutButton, saveButton, showHistogramButton,
                 showImageColorPalette);
@@ -286,13 +296,13 @@ public class EnterImage extends Application {
     public void CalculateImageByColor(Color color) {
         // int coun = 0;
         // for (int i = 0; i < images.size(); i++) {
-        //     Optional<String> firstKey = images.get(i).colorAndTheirName.keySet().stream().findFirst();
-        //     if (firstKey.isPresent()) {
-                
-        //     }
+        // Optional<String> firstKey =
+        // images.get(i).colorAndTheirName.keySet().stream().findFirst();
+        // if (firstKey.isPresent()) {
+
+        // }
         // }
     }
-    
 
     public static boolean isConvergent(Long old, Long newI) {
         if (Math.abs(old - newI) <= 10000) {
