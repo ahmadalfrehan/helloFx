@@ -67,7 +67,7 @@ public class Histogram extends Application {
             if (imageHistogram.isSuccess()) {
                 System.out.println(imageHistogram.getMaximmum());
                 chartHistogram.getData().addAll(
-                        imageHistogram.getSeriesAlpha(),
+                        // imageHistogram.getSeriesAlpha(),
                         imageHistogram.getSeriesRed(),
                         imageHistogram.getSeriesGreen(),
                         imageHistogram.getSeriesBlue());

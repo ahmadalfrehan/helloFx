@@ -214,12 +214,11 @@ public class EnterImage extends Application {
         seachByColor.setOnAction(e -> {
             cp.show();
             Color selectedColor = cp.getValue();
-            // Get the RGB values of the picked color
+            
             int red = (int) (selectedColor.getRed() * 255);
             int green = (int) (selectedColor.getGreen() * 255);
             int blue = (int) (selectedColor.getBlue() * 255);
 
-            // Create an RGB color using the RGB values
             Color rgbColor = Color.rgb(red, green, blue);
             CalculateImageByColor(rgbColor);
 
@@ -335,24 +334,22 @@ public class EnterImage extends Application {
         }
     }
 
+    public static boolean isConvergent(Long old, Long newI) {
+        if (Math.abs(old - newI) <= 10000) {
+            return true;
+        }
+        return false;
+    }
+
     public void CalculateImageByColor(Color color) {
         imagesAnother.clear(); // Clear the previous search results
         int count = 0;
         for (int i = 0; i < images.size(); i++) {
             SameImageModel currentImage = images.get(i);
-            // image=convertToRGB(currentImage.image) ;
-            // Color currentColor = Color.rgb(
-            // currentImage.red.intValue(),
-            // currentImage.green.intValue(),
-            // currentImage.blue.intValue()
-            // );
-            // Clamp the color values to the range of 0-255
             int red = clamp(currentImage.red.intValue(), 0, 255);
             int green = clamp(currentImage.green.intValue(), 0, 255);
             int blue = clamp(currentImage.blue.intValue(), 0, 255);
-
             Color currentColor = Color.rgb(red, green, blue);
-
             if (convergent(color, currentColor)) {
                 imagesAnother.add(count, currentImage);
                 System.out.println("====CalculateImageByColor====");
@@ -365,13 +362,6 @@ public class EnterImage extends Application {
 
     public static int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
-    }
-
-    public static boolean isConvergent(Long old, Long newI) {
-        if (Math.abs(old - newI) <= 10000) {
-            return true;
-        }
-        return false;
     }
 
     public static boolean convergent(Color color1, Color color2) {
